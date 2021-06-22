@@ -1,8 +1,7 @@
 const Discord = require("discord.js");
 const items = require("../../jsonFiles/items.json");
-const commafy = require("../../utility/functions/commafy");
-const findItemName = require("../../utility/functions/findItemName");
-const validType = require("../../utility/functions/validType");
+const functions = require("../../utility/functions.js");
+
 
 module.exports = {
 	name: "shop",
@@ -30,7 +29,7 @@ module.exports = {
 			allItemsArr.indexOf(args[0]) !== -1 ? "bruh I wish I could do this better" : undefined; //Checks if the argument includes an item of the list of items.
 
 		if (itemName) {
-			itemName = findItemName(args[0]);
+			itemName = functions.findItemName(args[0]);
 
             const itemPath = items[itemName];
 
@@ -48,7 +47,7 @@ module.exports = {
 				);
 			message.channel.send(embedItemInfo);
 		} else {
-			let currentPage = !args[0] ? 1 : validType(args[0]) === true ? args[0] : 1;
+			let currentPage = !args[0] ? 1 : functions.validType(args[0]) === true ? args[0] : 1;
 
 			let pages = Math.ceil(Object.keys(items).length / 5); //good code must not fix
 
@@ -73,7 +72,7 @@ module.exports = {
 				}
 
 				embedShop.addField(
-					`​${items[decleration].emoji}${items[decleration].name} — ${commafy(
+					`​${items[decleration].emoji}${items[decleration].name} — ${functions.commafy(
 						items[decleration].price
 					)} GP`,
 					`ID: *${items[decleration].id.join(", ")}* 
