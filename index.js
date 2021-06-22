@@ -3,6 +3,7 @@ const { prefix, token } = require("./jsonFiles/config.json");
 const mongoose = require("mongoose");
 const mongo = require("./utility/mongo.js");
 const fs = require("fs");
+const levels = require("./miscFiles/levels");
 
 const bot = new Discord.Client();
 
@@ -26,6 +27,7 @@ for (const folder of commandFolders) {
 
 bot.on("ready", async () => {
 	console.log("Connect as " + bot.user.tag);
+	levels(bot)
 
 	await mongo().then(() => {
 		try {
@@ -40,7 +42,7 @@ bot.on("ready", async () => {
 	});
 });
 
-bot.on("message", (message) => {
+bot.on("message", async (message) => {
 	try {
 		if (!message.content.startsWith(prefix) || message.author.bot) return;
 
