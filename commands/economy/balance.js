@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 const UserProfile = require("../../schemas/profileSchema");
-const economy = require("../../utility/economy");
+const economy = require("../../utility/mongodbFramwork");
 
 module.exports = {
 	name: "balance",
