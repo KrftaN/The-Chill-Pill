@@ -3,7 +3,7 @@ module.exports = {
 	aliases: ["name1", "name2"],
 	description: "This is a description",
 	args: false,
-    minArgs: 1,
+    maxArgs: 1,
 	cooldown: 1,
 	execute(message, args) {
 	},

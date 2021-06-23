@@ -53,8 +53,6 @@ bot.on("message", async (message) => {
 			const hasLeveledUp = await Levels.appendXp(
 				message.author.id,
 				message.guild.id,
-				message.guild.name,
-				message.author.username,
 				randomAmountOfXp
 			);
 			if (hasLeveledUp) {
@@ -88,12 +86,7 @@ bot.on("message", async (message) => {
 			}
 		}
 
-		if (
-			message.author.id !== "344834268742156298" &&
-			(command.name === "addbal" || command.name === "reload")
-		) {
-			return message.reply("Only creator man shall use this command!");
-		}
+		if (command.creator === true && message.author.id !== "344834268742156298") return message.reply("Wait what, you are not creator man, you cannot use the command!!!!!");
 
 		if (command.args === true && !args.length) {
 			let reply = `You didn't provide a valid arguments, ${message.author}!`;

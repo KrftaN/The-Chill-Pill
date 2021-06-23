@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const Fs = require("fs");
 const schedule = JSON.parse(Fs.readFileSync("./jsonFiles/schedule.json"));
 const bot = new Discord.Client();
+const scheduleDB = require("../../utility/mongodbFramwork");
 
 module.exports = {
 	name: "schedule",
@@ -11,9 +12,33 @@ module.exports = {
 	args: true,
 	minArgs: 1,
 	cooldown: 1,
+	usage: "<2000-01-01T12:00:00>",
 	execute(message, args) {
+		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
+		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
 
-		message.channel.bulkDelete(1);
+		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
+
+		const timer1 = dateThen - dateNow - 3600000;
+		const timer2 = dateThen - dateNow;
+		const displayTime = DateTime.fromMillis(dateThen).toLocaleString({
+			month: "long",
+			day: "numeric",
+			weekday: "long",
+			hour: "numeric",
+			minute: "2-digit",
+		});
+
+		const msgSender = message.author.username;
+		const msgSenderID = message.author.id; // bot.users.cache.get(id).send("Hello this is a test")
+		const time = 60000;
+
+		let {
+			guild: { memberCount },
+		} = message;
+		if (isNaN(timer1, timer2)) {
+			return message.reply("That is not correctly formatted, example: `<2000-01-01T12:00:00>`");
+		}
 
 		const configQuestions = [
 			"What do you want the description to be?",
@@ -65,34 +90,6 @@ module.exports = {
 			});
 		});
 
-		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
-		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
-
-		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
-
-		const timer1 = dateThen - dateNow - 3600000;
-		const timer2 = dateThen - dateNow;
-		const displayTime = DateTime.fromMillis(dateThen).toLocaleString({
-			month: "long",
-			day: "numeric",
-			weekday: "long",
-			hour: "numeric",
-			minute: "2-digit",
-		});
-
-		console.log(displayTime);
-
-		const msgSender = message.author.username;
-		const msgSenderID = message.author.id; // bot.users.cache.get(id).send("Hello this is a test")
-		const time = 60000;
-
-		let {
-			guild: { memberCount },
-		} = message;
-		if (isNaN(timer1, timer2) && args[0]) {
-			return message.reply("That is not correctly formatted, example: '2021-06-18T14:30:00'");
-		}
-
 		// Sending the acutal embed
 
 		function firstExecution() {
@@ -101,6 +98,7 @@ module.exports = {
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
 				.setDescription(config[0])
 				.setColor("DC143C")
+
 				.addFields(
 					{ name: "\u200B", value: "\u200B" },
 					{ name: "Campaign:", value: `${config[1]}`, inline: true },
@@ -109,27 +107,30 @@ module.exports = {
 					{ name: "\u200B", value: "\u200B" },
 					{
 						name: `Accepted (${schedule.accepted.length}/${memberCount - 2})`,
-						value: schedule.accepted.length !== 0 ? schedule.accepted : "-",
+						value: "-",
 						inline: true,
 					},
 					{
 						name: `Denied (${schedule.denied.length}/${memberCount - 2})`,
-						value: schedule.denied.length !== 0 ? schedule.denied : "-",
+						value: "-",
 						inline: true,
 					},
 					{
 						name: `Tentative (${schedule.tentative.length}/${memberCount - 2})`,
-						value: schedule.tentative.length !== 0 ? schedule.tentative : "-",
+						value: "-",
 						inline: true,
 					}
 				)
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
+			message.channel.bulkDelete(1);
 
-			message.channel.send("@everyone", scheduleEmbed).then((message) => {
+			message.channel.send("@everyone", scheduleEmbed).then(async (message) => {
 				message.react("✅");
 				message.react("❌");
 				message.react("❔");
+
+				scheduleDB.iniateSchedule(message.id);
 
 				// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 				const filter = (reaction, user) => {
@@ -141,12 +142,25 @@ module.exports = {
 					time: timer2, //timer2
 				});
 
-				collector.on("collect", (reaction, user) => {
+				collector.on("collect", async (reaction, user) => {
+					reaction.users.remove(user);
+
 					const emoji = reaction._emoji.name;
 
 					const emojiName = emoji === "✅" ? "accepted" : emoji === "❌" ? "denied" : "tentative";
 
 					schedule[emojiName].push(user.username);
+
+					const {
+						message: { id },
+					} = reaction;
+
+					const scheduleInfo = await scheduleDB.changeSchedule(
+						id,
+						user.username,
+						user.id,
+						emojiName
+					);
 
 					const upateScheduleEmbed = new Discord.MessageEmbed()
 						.setTitle(`**D&D** at ${displayTime}`)
@@ -161,24 +175,22 @@ module.exports = {
 							{ name: "\u200B", value: "\u200B" },
 							{
 								name: `Accepted (${schedule.accepted.length}/${memberCount - 2})`,
-								value: schedule.accepted.length !== 0 ? schedule.accepted : "-",
+								value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 								inline: true,
 							},
 							{
 								name: `Denied (${schedule.denied.length}/${memberCount - 2})`,
-								value: schedule.denied.length !== 0 ? schedule.denied : "-",
+								value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 								inline: true,
 							},
 							{
 								name: `Tentative (${schedule.tentative.length}/${memberCount - 2})`,
-								value: schedule.tentative.length !== 0 ? schedule.tentative : "-",
+								value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 								inline: true,
 							}
 						)
 						.setFooter(`This message was issued by ${msgSender}`)
 						.setTimestamp(new Date());
-
-					reaction.users.remove(user);
 
 					message.edit("@everyone", upateScheduleEmbed);
 				});
@@ -197,7 +209,9 @@ module.exports = {
 			return;
 		}
 
-		getConfig.then(firstExecution, handleRejected);
+		//	getConfig.then(firstExecution, handleRejected);
+
+		firstExecution();
 
 		Fs.writeFileSync("./jsonFiles/schedule.json", JSON.stringify(schedule));
 	},

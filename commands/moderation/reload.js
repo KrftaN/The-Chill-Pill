@@ -5,7 +5,7 @@ module.exports = {
 	description: "Only creator man shall use this command",
 	args: true,
 	guildOnly: false,
-	permissions: "ADMINISTRATOR",
+	creator: true,
 	aliases: ["roll", "r"],
 	usage: "<the command>",
 	cooldown: 0,
