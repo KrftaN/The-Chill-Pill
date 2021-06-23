@@ -7,7 +7,7 @@ const reqString = {
 
 const lvlSchema = mongoose.Schema({
 	userId: reqString,
-    guildId: reqString,
+	guildId: reqString,
 	userName: reqString,
 	coins: {
 		type: Number,
@@ -15,11 +15,13 @@ const lvlSchema = mongoose.Schema({
 	},
 	level: {
 		type: Number,
-        defult: 1
+		defult: 1,
+		required: true,
 	},
 	xp: {
 		type: Number,
-		defult: 0
+		defult: 0,
+		required: true,
 	},
 });
 

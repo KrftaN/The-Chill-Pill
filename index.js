@@ -1,10 +1,9 @@
 const Discord = require("discord.js");
-const { prefix, token } = require("./jsonFiles/config.json");
+const { prefix, token, mongoPath } = require("./jsonFiles/config.json");
 const mongoose = require("mongoose");
 const mongo = require("./utility/mongo.js");
 const fs = require("fs");
-const levels = require("./miscFiles/levels");
-
+const Levels = require("discord-xp");
 const bot = new Discord.Client();
 
 bot.login(token);
@@ -27,7 +26,7 @@ for (const folder of commandFolders) {
 
 bot.on("ready", async () => {
 	console.log("Connect as " + bot.user.tag);
-	levels(bot)
+	//levels(bot);
 
 	await mongo().then(() => {
 		try {
@@ -44,6 +43,28 @@ bot.on("ready", async () => {
 
 bot.on("message", async (message) => {
 	try {
+		await mongo().then(async (mongoose) => {
+			Levels.setURL(mongoPath);
+
+			if (!message.guild) return;
+			if (message.author.bot) return;
+
+			const randomAmountOfXp = Math.floor(Math.random() * 29) + 1; // Min 1, Max 30
+			const hasLeveledUp = await Levels.appendXp(
+				message.author.id,
+				message.guild.id,
+				message.guild.name,
+				message.author.username,
+				randomAmountOfXp
+			);
+			if (hasLeveledUp) {
+				const user = await Levels.fetch(message.author.id, message.guild.id);
+				message.channel.send(
+					`${message.author}, congratulations! You have leveled up to **${user.level}** in \`${message.guild.name}\` :sunglasses:`
+				);
+			}
+		});
+
 		if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 		const args = message.content.slice(prefix.length).trim().split(/ +/);
