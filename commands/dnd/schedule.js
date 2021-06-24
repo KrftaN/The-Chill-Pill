@@ -14,6 +14,12 @@ module.exports = {
 	cooldown: 1,
 	usage: "<2000-01-01T12:00:00>",
 	execute(message, args) {
+		message.reply("Check your DM'S").then((msg) =>
+			msg.delete({
+				timeout: 10000,
+			})
+		);
+
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
 		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
 
@@ -128,12 +134,13 @@ module.exports = {
 				message.react("✅");
 				message.react("❌");
 				message.react("❔");
+				message.react("🗑️");
 
 				scheduleDB.iniateSchedule(message.id);
 
 				// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 				const filter = (reaction, user) => {
-					return ["✅", "❌", "❔"].includes(reaction.emoji.name) && !user.bot;
+					return ["✅", "❌", "❔", "🗑️"].includes(reaction.emoji.name) && !user.bot;
 				};
 
 				// Create the collector
