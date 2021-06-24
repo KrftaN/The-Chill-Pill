@@ -10,9 +10,9 @@ module.exports = {
 	args: false,
 	execute(message, args) {
 	message.channel.send("this is a test").then((message) => {
-		const id = message.id;
+		
 
-		console.log(id)
+		
 	})
 	},
 };

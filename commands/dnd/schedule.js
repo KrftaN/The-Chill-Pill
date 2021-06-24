@@ -48,6 +48,7 @@ module.exports = {
 		];
 
 		let config = [];
+		message.channel.bulkDelete(1);
 
 		const getConfig = new Promise((resolve, reject) => {
 			let i = 0;
@@ -98,7 +99,6 @@ module.exports = {
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
 				.setDescription(config[0])
 				.setColor("DC143C")
-
 				.addFields(
 					{ name: "\u200B", value: "\u200B" },
 					{ name: "Campaign:", value: `${config[1]}`, inline: true },
@@ -106,24 +106,23 @@ module.exports = {
 					{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (${schedule.accepted.length}/${memberCount - 2})`,
+						name: `Accepted (0/${memberCount - 2})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (${schedule.denied.length}/${memberCount - 2})`,
+						name: `Denied (0/${memberCount - 2})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Tentative (${schedule.tentative.length}/${memberCount - 2})`,
+						name: `Tentative (0/${memberCount - 2})`,
 						value: "-",
 						inline: true,
 					}
 				)
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
-			message.channel.bulkDelete(1);
 
 			message.channel.send("@everyone", scheduleEmbed).then(async (message) => {
 				message.react("✅");
@@ -149,8 +148,6 @@ module.exports = {
 
 					const emojiName = emoji === "✅" ? "accepted" : emoji === "❌" ? "denied" : "tentative";
 
-					schedule[emojiName].push(user.username);
-
 					const {
 						message: { id },
 					} = reaction;
@@ -161,6 +158,8 @@ module.exports = {
 						user.id,
 						emojiName
 					);
+
+					console.log(scheduleInfo);
 
 					const upateScheduleEmbed = new Discord.MessageEmbed()
 						.setTitle(`**D&D** at ${displayTime}`)
@@ -174,17 +173,17 @@ module.exports = {
 							{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 							{ name: "\u200B", value: "\u200B" },
 							{
-								name: `Accepted (${schedule.accepted.length}/${memberCount - 2})`,
+								name: `Accepted (${scheduleInfo[0].length}/${memberCount - 2})`,
 								value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 								inline: true,
 							},
 							{
-								name: `Denied (${schedule.denied.length}/${memberCount - 2})`,
+								name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
 								value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 								inline: true,
 							},
 							{
-								name: `Tentative (${schedule.tentative.length}/${memberCount - 2})`,
+								name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
 								value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 								inline: true,
 							}
@@ -209,9 +208,7 @@ module.exports = {
 			return;
 		}
 
-		//	getConfig.then(firstExecution, handleRejected);
-
-		firstExecution();
+		getConfig.then(firstExecution, handleRejected);
 
 		Fs.writeFileSync("./jsonFiles/schedule.json", JSON.stringify(schedule));
 	},
