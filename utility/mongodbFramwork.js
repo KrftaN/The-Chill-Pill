@@ -39,6 +39,8 @@ module.exports.getGP = async (userId, userName) => {
 	});
 };
 
+
+// Schedule Database code starts here
 module.exports.changeSchedule = async (messageId, userName, userId, reaction) => {
 	return await mongo().then(async (mongoose) => {
 		try {
@@ -201,3 +203,4 @@ module.exports.deleteSchedule = async (messageId) => {
 		}
 	});
 };
+// Schedule Database code stops here
