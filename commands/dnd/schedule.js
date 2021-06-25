@@ -20,6 +20,7 @@ module.exports = {
 			})
 		);
 
+		let embedId;
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
 		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
 
@@ -36,7 +37,7 @@ module.exports = {
 		});
 
 		const msgSender = message.author.username;
-		const msgSenderID = message.author.id; // bot.users.cache.get(id).send("Hello this is a test")
+		const originalSender = message.author.id; // bot.users.cache.get(id).send("Hello this is a test")
 		const time = 60000;
 
 		let {
@@ -116,13 +117,14 @@ module.exports = {
 						value: "-",
 						inline: true,
 					},
+
 					{
-						name: `Denied (0/${memberCount - 2})`,
+						name: `Tentative (0/${memberCount - 2})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Tentative (0/${memberCount - 2})`,
+						name: `Denied (0/${memberCount - 2})`,
 						value: "-",
 						inline: true,
 					}
@@ -132,11 +134,13 @@ module.exports = {
 
 			message.channel.send("@everyone", scheduleEmbed).then(async (message) => {
 				message.react("✅");
-				message.react("❌");
 				message.react("❔");
+				message.react("❌");
 				message.react("🗑️");
 
-				scheduleDB.iniateSchedule(message.id);
+				embedId = message.id;
+
+				scheduleDB.iniateSchedule(embedId);
 
 				// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 				const filter = (reaction, user) => {
@@ -153,20 +157,71 @@ module.exports = {
 
 					const emoji = reaction._emoji.name;
 
-					const emojiName = emoji === "✅" ? "accepted" : emoji === "❌" ? "denied" : "tentative";
+					const emojiName =
+						emoji === "✅"
+							? "accepted"
+							: emoji === "❌"
+							? "denied"
+							: emoji === "❔"
+							? "tentative"
+							: "delete";
 
+					if (emojiName === "delete" && user.id === originalSender) {
+						message.channel
+							.send("Are you sure you want to delete this schedule? If not ignore this message,")
+							.then((msg) => {
+								msg.react("✅");
+
+								const filter1 = (reaction, user) => {
+									return user.id === originalSender;
+								};
+
+								const collector1 = msg.createReactionCollector(filter1, { max: 1, time: 30000 });
+
+								collector1.on("collect", (reaction, user) => {
+									const emoji = reaction._emoji.name;
+
+									if (emoji === "✅") {
+										msg.edit("You've successfully deleted the schedule");
+
+										scheduleDB.deleteSchedule(embedId);
+										collector.stop();
+										msg.delete({
+											timeout: 7500,
+										});
+										message.delete({
+											timeout: 7500,
+										});
+									}
+								});
+
+								collector1.on("end", (collected, reason) => {
+									if (reason === "time") {
+										msg.edit(
+											"You ran out of time. React with the bin again to reinitiate this process"
+										);
+										msg.delete({
+											timeout: 7500,
+										});
+									}
+								});
+							});
+					} else if (emojiName === "delete" && user.id !== originalSender) {
+						return message.channel.send("You cannot delete this schedule!").then((msg) =>
+							msg.delete({
+								timeout: 5000,
+							})
+						);
+					}
 					const {
 						message: { id },
 					} = reaction;
-
 					const scheduleInfo = await scheduleDB.changeSchedule(
 						id,
 						user.username,
 						user.id,
 						emojiName
 					);
-
-					console.log(scheduleInfo);
 
 					const upateScheduleEmbed = new Discord.MessageEmbed()
 						.setTitle(`**D&D** at ${displayTime}`)
@@ -185,13 +240,13 @@ module.exports = {
 								inline: true,
 							},
 							{
-								name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
-								value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
+								name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
+								value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 								inline: true,
 							},
 							{
-								name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
-								value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
+								name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
+								value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 								inline: true,
 							}
 						)

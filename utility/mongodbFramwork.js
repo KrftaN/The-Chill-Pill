@@ -4,7 +4,7 @@ const scheduleSchema = require("../schemas/scheduleSchema");
 
 module.exports = (bot) => {};
 
-module.exports.getCoins = async (userId, userName) => {
+module.exports.getGP = async (userId, userName) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			console.log("Running findOne()");
@@ -13,28 +13,26 @@ module.exports.getCoins = async (userId, userName) => {
 				userId,
 			});
 
-			console.log("RESULT:", result);
-
-			let coins = 100;
+			let gp = 100;
 			let bank = 0;
 			let level = 1;
 			let size = Math.floor(Math.random() * 25) + 1;
 			if (result) {
-				coins = result.coins;
+				gp = result.coins;
 				bank = result.bank;
 			} else {
 				console.log("Inserting a document");
 				await new profileSchema({
 					userId,
 					userName,
-					coins,
+					gp,
 					bank,
 					level,
 					size,
 				}).save();
 			}
 
-			return [coins, bank];
+			return [gp, bank];
 		} finally {
 			mongoose.connection.close();
 		}
@@ -46,7 +44,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 		try {
 			console.log("Running findOne()");
 
-			const result = await scheduleSchema.findOne({
+			let result = await scheduleSchema.findOne({
 				messageId,
 			});
 
@@ -87,24 +85,65 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			//				result.save();
 			//			}
 
-			console.log("RESULT1:", result);
-
-
 			if (isArrEmpty() === true) {
-				result[reaction].push(userName);
-				result.save();
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$push: {
+							[reaction]: userName,
+						},
+					}
+				);
 			} else if (!findField(userName)) {
-				result[reaction].push(userName);
+				//result[reaction].push(userName);
+
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$push: {
+							[reaction]: userName,
+						},
+					}
+				);
 			} else if (currentPositionOfUserName != newPositionOfUserName) {
-
-				result[findField(userName)].pop(userName);
-				result[reaction].push(userName);
-				result.save();
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$push: {
+							[reaction]: userName,
+						},
+						$pull: {
+							[findField(userName)]: userName,
+						},
+					}
+				);
 			} else {
-
-				result[reaction].pop(userName);
-				result.save();
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$pull: {
+							[reaction]: userName,
+						},
+					}
+				);
 			}
+
+			result = await scheduleSchema.findOne({
+				messageId,
+			});
+
+			accepted = result.accepted;
+			denied = result.denied;
+			tentative = result.tentative;
+			acceptedIds = result.acceptedIds;
 
 			return [accepted, denied, tentative];
 		} catch {
@@ -122,24 +161,24 @@ module.exports.iniateSchedule = async (messageId) => {
 				messageId,
 			});
 
-			console.log("RESULT:", result);
-
 			let accepted = [];
 			let denied = [];
 			let tentative = [];
 			let acceptedIds = [];
 			if (result) {
 				accepted = result.accepted;
-				denied = result.denied;
 				tentative = result.tentative;
+				denied = result.denied;
+
 				acceptedIds = result.acceptedIds;
 			} else {
 				console.log("Inserting a document");
 				await new scheduleSchema({
 					messageId,
 					accepted,
-					denied,
 					tentative,
+					denied,
+
 					acceptedIds,
 				}).save();
 			}
@@ -149,36 +188,14 @@ module.exports.iniateSchedule = async (messageId) => {
 	});
 };
 
-module.exports.testSchema = async (messageId) => {
+module.exports.deleteSchedule = async (messageId) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log("Running findOne()");
+			console.log("Running findOneAndDelete()");
 
-			const result = await scheduleSchema.findOne({
-				authorId,
+			await scheduleSchema.deleteOne({
+				messageId,
 			});
-
-			console.log("RESULT:", result);
-
-			let accepted = [];
-			let denied = [];
-			let tentative = [];
-			let acceptedIds = [];
-			if (result) {
-				accepted = result.accepted;
-				denied = result.denied;
-				tentative = result.tentative;
-				acceptedIds = result.acceptedIds;
-			} else {
-				console.log("Inserting a document");
-				await new scheduleSchema({
-					messageId,
-					accepted,
-					denied,
-					tentative,
-					acceptedIds,
-				}).save();
-			}
 		} finally {
 			mongoose.connection.close();
 		}

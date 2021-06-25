@@ -8,7 +8,7 @@ const reqString = {
 const profileSchema = mongoose.Schema({
 	userId: reqString,
 	userName: reqString,
-	coins: {
+	gp: {
 		type: Number,
 		required: true,
 	},
@@ -21,6 +21,10 @@ const profileSchema = mongoose.Schema({
 		required: true,
 	},
 	size: {
+		type: Number,
+		required: true,
+	},
+	haram: {
 		type: Number,
 		required: true,
 	},

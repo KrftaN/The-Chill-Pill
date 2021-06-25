@@ -1,16 +1,14 @@
 const mongoose = require("mongoose");
 
-const reqString = {
-	type: String,
-	required: true,
-};
-
 const scheduleSchema = mongoose.Schema({
-	messageId: reqString,
-	accepted: { type: Array },
-	denied: { type: Array },
-	tentative: { type: Array },
-	acceptedIds: { type: Array },
+	messageId: {
+		type: String,
+		required: true,
+	},
+	accepted: [String],
+	tentative: [String],
+	denied: [String],
+	acceptedIds: [String],
 });
 
 module.exports = mongoose.model("schedules", scheduleSchema);

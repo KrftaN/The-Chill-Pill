@@ -18,7 +18,7 @@ module.exports = {
 		const userId = targetId;
 		const userName = target.username;
 
-		const balance = await economy.getCoins(userId, userName);
+		const balance = await economy.getGP(userId, userName);
 
 		const embedBal = new Discord.MessageEmbed() // This checks your own balance
 			.setColor("#DC143C")

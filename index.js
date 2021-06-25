@@ -135,7 +135,7 @@ bot.on("message", async (message) => {
 		}
 
 		try {
-			command.execute(message, args);
+			command.execute(message, args, message.guild);
 		} catch (err) {
 			console.log(err);
 		}

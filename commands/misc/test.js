@@ -8,11 +8,8 @@ module.exports = {
 	description: "testing!",
 	cooldown: 0,
 	args: false,
-	execute(message, args) {
-	message.channel.send("this is a test").then((message) => {
+	execute(message, args, guild) {
 		
-
-		
-	})
+		console.log(guild);
 	},
 };
