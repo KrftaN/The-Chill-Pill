@@ -4,11 +4,10 @@ const scheduleSchema = require("../schemas/scheduleSchema");
 
 module.exports = (bot) => {};
 
+// Economy Database code starts here
 module.exports.getGP = async (userId, userName) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log("Running findOne()");
-
 			const result = await profileSchema.findOne({
 				userId,
 			});
@@ -38,14 +37,12 @@ module.exports.getGP = async (userId, userName) => {
 		}
 	});
 };
-
+// Economy Database code stops here
 
 // Schedule Database code starts here
 module.exports.changeSchedule = async (messageId, userName, userId, reaction) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log("Running findOne()");
-
 			let result = await scheduleSchema.findOne({
 				messageId,
 			});
@@ -82,10 +79,31 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 				return true;
 			}
 
-			//			if (reaction === "accept") {
-			//				result.acceptedIds.push(userId);
-			//				result.save();
-			//			}
+			async function addId(userId) {
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$push: {
+							acceptedIds: userId,
+						},
+					}
+				);
+			}
+
+			async function removeId(userId) {
+				await scheduleSchema.findOneAndUpdate(
+					{
+						messageId: messageId,
+					},
+					{
+						$pull: {
+							acceptedIds: userId,
+						},
+					}
+				);
+			}
 
 			if (isArrEmpty() === true) {
 				await scheduleSchema.findOneAndUpdate(
@@ -98,6 +116,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						},
 					}
 				);
+
+				if (newPositionOfUserName === 0) {
+					addId(userId);
+				}
 			} else if (!findField(userName)) {
 				//result[reaction].push(userName);
 
@@ -111,6 +133,9 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						},
 					}
 				);
+				if (newPositionOfUserName === 0) {
+					addId(userId);
+				}
 			} else if (currentPositionOfUserName != newPositionOfUserName) {
 				await scheduleSchema.findOneAndUpdate(
 					{
@@ -125,7 +150,16 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						},
 					}
 				);
+
+				if (currentPositionOfUserName !== 0 && newPositionOfUserName === 0) {
+					addId(userId);
+				} else if (currentPositionOfUserName === 0 && newPositionOfUserName !== 0) {
+					removeId(userId);
+				}
 			} else {
+				if (currentPositionOfUserName === 0) {
+					removeId(userId);
+				}
 				await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
@@ -154,11 +188,25 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 	});
 };
 
+module.exports.getScheduleIds = async (messageId) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await scheduleSchema.findOne({
+				messageId,
+			});
+
+			acceptedIds = result.acceptedIds;
+
+			return acceptedIds;
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
 module.exports.iniateSchedule = async (messageId) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log("Running findOne()");
-
 			const result = await scheduleSchema.findOne({
 				messageId,
 			});
@@ -180,7 +228,6 @@ module.exports.iniateSchedule = async (messageId) => {
 					accepted,
 					tentative,
 					denied,
-
 					acceptedIds,
 				}).save();
 			}

@@ -5,6 +5,10 @@ const schedule = JSON.parse(Fs.readFileSync("./jsonFiles/schedule.json"));
 const bot = new Discord.Client();
 const scheduleDB = require("../../utility/mongodbFramwork");
 
+const { token } = require("../../jsonFiles/config.json");
+
+bot.login(token);
+
 module.exports = {
 	name: "schedule",
 	aliases: ["schedule", "s"],
@@ -14,12 +18,7 @@ module.exports = {
 	cooldown: 1,
 	usage: "<2000-01-01T12:00:00>",
 	execute(message, args) {
-		message.reply("Check your DM'S").then((msg) =>
-			msg.delete({
-				timeout: 10000,
-			})
-		);
-
+		let scheduleInfo;
 		let embedId;
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
 		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
@@ -29,6 +28,13 @@ module.exports = {
 		const timer1 = dateThen - dateNow - 3600000;
 		const timer2 = dateThen - dateNow;
 		const displayTime = DateTime.fromMillis(dateThen).toLocaleString({
+			month: "long",
+			day: "numeric",
+			weekday: "long",
+			hour: "numeric",
+			minute: "2-digit",
+		});
+		const displayTime2 = DateTime.fromMillis(dateThen - 3600000).toLocaleString({
 			month: "long",
 			day: "numeric",
 			weekday: "long",
@@ -46,12 +52,17 @@ module.exports = {
 		if (isNaN(timer1, timer2)) {
 			return message.reply("That is not correctly formatted, example: `<2000-01-01T12:00:00>`");
 		}
-
+		message.reply("Check your DM'S").then((msg) =>
+			msg.delete({
+				timeout: 10000,
+			})
+		);
 		const configQuestions = [
 			"What do you want the description to be?",
 			"What campaign are you playing?",
 			"Who is the DM?",
 			"What is the whereabout of the session?",
+			`What do you want the message at "${displayTime2}"`,
 		];
 
 		let config = [];
@@ -78,6 +89,8 @@ module.exports = {
 					if (i === 1) return collected.channel.send("What campaign are you playing?"); //next prompt
 					if (i === 2) return collected.channel.send("Who is the DM?"); //and so on until you get to the last prompt
 					if (i === 3) return collected.channel.send("What is the whereabout of the session?"); //next prompt
+					if (i === 4)
+						return collected.channel.send(`What do you want the message at "${displayTime2}"`);
 				});
 				collector.on("end", (collected, reason) => {
 					if (reason === "time")
@@ -216,12 +229,9 @@ module.exports = {
 					const {
 						message: { id },
 					} = reaction;
-					const scheduleInfo = await scheduleDB.changeSchedule(
-						id,
-						user.username,
-						user.id,
-						emojiName
-					);
+					scheduleInfo = await scheduleDB.changeSchedule(id, user.username, user.id, emojiName);
+
+					console.log(scheduleInfo);
 
 					const upateScheduleEmbed = new Discord.MessageEmbed()
 						.setTitle(`**D&D** at ${displayTime}`)
@@ -258,11 +268,27 @@ module.exports = {
 
 				collector.on("end", (reason) => {});
 
-				setTimeout(() => {
-					schedule.acceptedIDs.forEach((id) =>
-						bot.users.cache.get(id).send("Hello this is a test")
-					);
+				setTimeout(async () => {
+					const userIds = await scheduleDB.changeSchedule(embedId);
+
+					console.log(userIds);
+
+					if (userIds) return;
+
+					console.log(userIds);
+
+					userIds.forEach((id) => {
+						console.log(id);
+
+						bot.users.fetch(id).then((dm) => {
+							dm.send(config[4]);
+						});
+					});
 				}, timer1);
+				setTimeout(() => {
+					message.edit("Hope you all had a fun game!");
+					scheduleDB.deleteSchedule(embedId);
+				}, timer2);
 			});
 		}
 
