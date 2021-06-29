@@ -1,3 +1,5 @@
+const Discord = require("discord.js");
+
 module.exports = {
 	name: "name",
 	aliases: ["name1", "name2"],
@@ -6,5 +8,6 @@ module.exports = {
     maxArgs: 1,
 	cooldown: 1,
 	execute(message, args) {
+		
 	},
 };

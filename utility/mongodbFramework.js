@@ -1,6 +1,8 @@
 const mongo = require("./mongo");
 const profileSchema = require("../schemas/profileSchema");
 const scheduleSchema = require("../schemas/scheduleSchema");
+const gpCache = {};
+const dailyCache = {};
 
 module.exports = (bot) => {};
 
@@ -12,24 +14,23 @@ module.exports.getGP = async (userId, userName) => {
 				userId,
 			});
 
-			let gp = 100;
+			let gp = 500;
 			let bank = 0;
-			let level = 1;
 			let size = Math.floor(Math.random() * 25) + 1;
 			if (result) {
-				gp = result.coins;
+				gp = result.gp;
 				bank = result.bank;
 			} else {
-				console.log("Inserting a document");
 				await new profileSchema({
 					userId,
 					userName,
 					gp,
 					bank,
-					level,
 					size,
 				}).save();
 			}
+
+			(gpCache[`${userId}`] = result.gp), result.bank;
 
 			return [gp, bank];
 		} finally {
@@ -37,6 +38,100 @@ module.exports.getGP = async (userId, userName) => {
 		}
 	});
 };
+
+module.exports.addBal = async (userId, number) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOneAndUpdate(
+				{
+					userId,
+				},
+				{
+					$inc: {
+						gp: number,
+					},
+				}
+			);
+
+			gp = result.gp;
+
+			return gp + number;
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.removeBal = async (userId, number) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOneAndUpdate(
+				{
+					userId,
+				},
+				{
+					$inc: {
+						gp: -number,
+					},
+				}
+			);
+
+			gp = result.gp;
+
+			return gp + number;
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.checkUserDate = async (userId, date) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOne({
+				userId,
+			});
+
+			let gp = 500;
+			let bank = 0;
+			let size = Math.floor(Math.random() * 25) + 1;
+			if (result) {
+				gp = result.gp;
+				bank = result.bank;
+			} else {
+				await new profileSchema({
+					userId,
+					userName,
+					gp,
+					bank,
+					size,
+				}).save();
+			}
+
+			userDate = result.daily;
+
+			if (userDate === date) {
+				return false;
+			} else {
+				await profileSchema.findOneAndUpdate(
+					{
+						userId,
+					},
+					{
+						daily: date,
+					}
+				);
+
+				const bal = await module.exports.addBal(userId, 3000);
+
+				return [true, bal];
+			}
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
 // Economy Database code stops here
 
 // Schedule Database code starts here
@@ -222,7 +317,6 @@ module.exports.iniateSchedule = async (messageId) => {
 
 				acceptedIds = result.acceptedIds;
 			} else {
-				console.log("Inserting a document");
 				await new scheduleSchema({
 					messageId,
 					accepted,
@@ -240,8 +334,6 @@ module.exports.iniateSchedule = async (messageId) => {
 module.exports.deleteSchedule = async (messageId) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log("Running findOneAndDelete()");
-
 			await scheduleSchema.deleteOne({
 				messageId,
 			});

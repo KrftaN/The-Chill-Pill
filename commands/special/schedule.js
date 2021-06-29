@@ -1,9 +1,8 @@
 const { DateTime } = require("luxon");
 const Discord = require("discord.js");
-const Fs = require("fs");
-const schedule = JSON.parse(Fs.readFileSync("./jsonFiles/schedule.json"));
 const bot = new Discord.Client();
-const scheduleDB = require("../../utility/mongodbFramwork");
+const scheduleDB = require("../../utility/mongodbFramework");
+const functions = require("../../utility/functions.js");
 
 const { token } = require("../../jsonFiles/config.json");
 
@@ -16,7 +15,7 @@ module.exports = {
 	args: true,
 	minArgs: 1,
 	cooldown: 1,
-	usage: "<2000-01-01T12:00:00>",
+	usage: "<2000-01-01T12:00>",
 	execute(message, args) {
 		let scheduleInfo;
 		let embedId;
@@ -45,13 +44,12 @@ module.exports = {
 
 		const msgSender = message.author.username;
 		const originalSender = message.author.id;
-		const time = 60000;
 
 		let {
 			guild: { memberCount },
 		} = message;
 		if (isNaN(timer1, timer2)) {
-			return message.reply("That is not correctly formatted, example: `<2000-01-01T12:00:00>`");
+			return message.reply("That is not correctly formatted, example: `<2000-01-01T12:00>`");
 		}
 		message.reply("Check your DM'S").then((msg) =>
 			msg.delete({
@@ -66,87 +64,121 @@ module.exports = {
 			let i = 0;
 			let userData;
 			let originalChanel;
-			message.author.send("Choose preset. `<d&d>, <game event> or <event>`").then((m) => {
-				originalChanel = message.channel.name;
+			message.author
+				.send(functions.embedify("Choose preset. `<d&d>, <game event> or <event>`"))
+				.then((m) => {
+					originalChanel = message.channel.name;
 
-				const collector = m.channel.createMessageCollector(
-					(me) => me.author.id === message.author.id && me.channel === m.channel,
-					{
-						time: 120 * 1000,
-					}
-				);
-				collector.on("collect", (collected) => {
-					config.push(collected.content);
-					const configQuestions =
-						embedPref === 1
-							? [
-									"What do you want the description to be?",
-									"What campaign are you playing?",
-									"Who is the DM?",
-									"What is the whereabout of the session?",
-									`What do you want the message at "${displayTime2}"`,
-							  ]
-							: embedPref === 2
-							? [
-									"What do you want the description to be?",
-									"What game are you playing?",
-									"Any additional notes?",
-									`What do you want the message at "${displayTime2}"`,
-							  ]
-							: [
-									"What do you want the description to be?",
-									"What are you doing?",
-									"Any additional notes?",
-									`What do you want the message at "${displayTime2}"`,
-							  ];
-					userData = collected.channel;
-
-					switch (config[0]) {
-						case "dnd":
-						case "d&d":
-						case "dungeons and dragons":
-							if (i >= configQuestions.length) {
-								collector.stop();
-							}
-
-							embedPref = 1;
-							collected.channel.send(configQuestions[i]);
-							break;
-						case "game event":
-							if (i >= configQuestions.length) {
-								collector.stop();
-							}
-							embedPref = 2;
-							collected.channel.send(configQuestions[i]);
-							break;
-						case "event":
-							if (i >= configQuestions.length) {
-								collector.stop();
-							}
-							collected.channel.send(configQuestions[i]);
-							break;
-						default:
-							collected.channel.send("Something went wrong, try again");
-							collector.stop();
-							reject();
-							break;
-					}
-					i += 1;
-				});
-				collector.on("end", (collected, reason) => {
-					if (reason === "time")
-						return (
-							reject(),
-							message.author.send(
-								`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
-							)
-						);
-
-					return (
-						resolve(), config, userData.send(`**Sending message in:** \`${originalChanel}\`...`)
+					const collector = m.channel.createMessageCollector(
+						(me) => me.author.id === message.author.id && me.channel === m.channel,
+						{
+							time: 120 * 1000,
+						}
 					);
+					collector.on("collect", (collected) => {
+						config.push(collected.content);
+						const configQuestions =
+							embedPref === 1
+								? timer1 >= 0
+									? [
+											"What do you want the description to be?",
+											"What campaign are you playing?",
+											"Who is the DM?",
+											"What is the whereabout of the session?",
+											`What do you want the message at "${displayTime2}"`,
+									  ]
+									: [
+											"What do you want the description to be?",
+											"What campaign are you playing?",
+											"Who is the DM?",
+											"What is the whereabout of the session?",
+									  ]
+								: embedPref === 2
+								? timer1 >= 0
+									? [
+											"What do you want the description to be?",
+											"What game are you playing?",
+											"Any additional notes?",
+											`What do you want the message at "${displayTime2}"`,
+									  ]
+									: [
+											"What do you want the description to be?",
+											"What game are you playing?",
+											"Any additional notes?",
+									  ]
+								: timer1 >= 0
+								? [
+										"What do you want the description to be?",
+										"What are you doing?",
+										"Any additional notes?",
+										`What do you want the message at "${displayTime2}"`,
+								  ]
+								: [
+										"What do you want the description to be?",
+										"What are you doing?",
+										"Any additional notes?",
+								  ];
+						userData = collected.channel;
+
+						switch (config[0]) {
+							case "dnd":
+							case "d&d":
+							case "dungeons and dragons":
+								if (i >= configQuestions.length) {
+									resolve();
+									collected.channel.send(
+										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
+									);
+									collector.stop();
+									return;
+								}
+
+								embedPref = 1;
+								collected.channel.send(functions.embedify(configQuestions[i]));
+								break;
+							case "game event":
+								if (i >= configQuestions.length) {
+									resolve();
+									collected.channel.send(
+										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
+									);
+									collector.stop();
+									return;
+								}
+								embedPref = 2;
+								collected.channel.send(functions.embedify(configQuestions[i]));
+								break;
+							case "event":
+								if (i >= configQuestions.length) {
+									resolve();
+									collected.channel.send(
+										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
+									);
+									collector.stop();
+									return;
+								}
+								collected.channel.send(functions.embedify(configQuestions[i]));
+								break;
+							default:
+								reject();
+								collected.channel.send("Something went wrong, try again");
+								collector.stop();
+								break;
+						}
+						i += 1;
+					});
+					collector.on("end", (collected, reason) => {
+						if (reason === "time")
+							return (
+								reject(),
+								message.author.send(
+									`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
+								)
+							);
+
+						return config;
+					});
 				});
-			});
 		});
 
 		// Sending the acutal embed
@@ -164,18 +196,18 @@ module.exports = {
 					{ name: "Whereabout:", value: `${config[4]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount - 2})`,
+						name: `Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Tentative (0/${memberCount - 2})`,
+						name: `Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount - 2})`,
+						name: `Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -196,18 +228,18 @@ module.exports = {
 					{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount - 2})`,
+						name: `Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Tentative (0/${memberCount - 2})`,
+						name: `Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount - 2})`,
+						name: `Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -228,18 +260,18 @@ module.exports = {
 					{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount - 2})`,
+						name: `Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Tentative (0/${memberCount - 2})`,
+						name: `Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount - 2})`,
+						name: `Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -303,14 +335,11 @@ module.exports = {
 
 										if (emoji === "✅") {
 											msg.edit("You've successfully deleted the schedule");
-
 											scheduleDB.deleteSchedule(embedId);
 											collector.stop();
+											message.delete();
 											msg.delete({
-												timeout: 7500,
-											});
-											message.delete({
-												timeout: 7500,
+												timeout: 3000,
 											});
 										}
 									});
@@ -350,17 +379,17 @@ module.exports = {
 								{ name: "Whereabout:", value: `${config[4]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount - 2})`,
+									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
+									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
+									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -381,17 +410,17 @@ module.exports = {
 								{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount - 2})`,
+									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
+									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
+									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -412,17 +441,17 @@ module.exports = {
 								{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount - 2})`,
+									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Tentative (${scheduleInfo[2].length}/${memberCount - 2})`,
+									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount - 2})`,
+									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -441,26 +470,36 @@ module.exports = {
 					});
 
 					collector.on("end", (reason) => {
-						message.edit("Hope you all had a fun game!");
+						message.reactions
+							.removeAll()
+							.catch((error) => console.error("Failed to clear reactions: ", error));
+						message.edit(
+							functions.embedify(
+								`Hope you all enjoyed the ${
+									embedPref === 1 ? "session!" : embedPref === 2 ? "game event!" : "event!"
+								}`
+							)
+						);
 						scheduleDB.deleteSchedule(embedId);
+
+						message.delete({
+							timeout: 43200000,
+						});
 					});
 
-					setTimeout(async () => {
-						console.log("Well I got here");
-						const userIds = await scheduleDB.getScheduleIds(embedId);
+					if (timer1 >= 0) {
+						setTimeout(async () => {
+							const userIds = await scheduleDB.getScheduleIds(embedId);
 
-						if (!userIds) return;
+							if (!userIds.length === 0) return;
 
-						console.log(userIds, "bruh");
-
-						userIds.forEach((id) => {
-							console.log(id);
-
-							bot.users.fetch(id).then((dm) => {
-								dm.send(config[5]);
+							userIds.forEach((id) => {
+								bot.users.fetch(id).then((dm) => {
+									dm.send(config[5]);
+								});
 							});
-						});
-					}, timer1);
+						}, timer1);
+					}
 				});
 		}
 
@@ -469,7 +508,5 @@ module.exports = {
 		}
 
 		getConfig.then(firstExecution, handleRejected);
-
-		Fs.writeFileSync("./jsonFiles/schedule.json", JSON.stringify(schedule));
 	},
 };

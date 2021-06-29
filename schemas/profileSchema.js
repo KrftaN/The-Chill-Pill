@@ -16,10 +16,6 @@ const profileSchema = mongoose.Schema({
 		type: Number,
 		required: true,
 	},
-	level: {
-		type: Number,
-		required: true,
-	},
 	size: {
 		type: Number,
 		required: true,
@@ -27,6 +23,10 @@ const profileSchema = mongoose.Schema({
 	haram: {
 		type: Number,
 		required: true,
+	},
+	daily: {
+		type: String,
+		required: false,
 	},
 });
 

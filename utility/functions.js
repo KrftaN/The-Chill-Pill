@@ -1,4 +1,5 @@
 const items = require("../jsonFiles/items.json");
+const Discord = require("discord.js");
 
 module.exports.findItemName = (name) => {
 	let allItemsObj = new Object();
@@ -32,6 +33,12 @@ module.exports.commafy = (num) => {
 		str[1] = str[1].replace(/(\d{3})/g, "$1 ");
 	}
 	return str.join(".");
+};
+
+module.exports.embedify = (str) => {
+	const embed = new Discord.MessageEmbed().setTitle(str).setColor("DC143C");
+
+	return embed;
 };
 
 function balRemove(amount) {
