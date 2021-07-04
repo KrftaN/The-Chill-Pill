@@ -21,8 +21,8 @@ module.exports = {
 		const embedBal = new Discord.MessageEmbed() // This checks your own balance
 			.setColor("#DC143C")
 			.setTitle(`${userName}'s Balance`)
-			.addField("> Wallet", `***${balance[0]}*** GP`)
-			.addField("> Bank", `***${balance[1]}*** GP`)
+			.addField("Wallet", `> ***${balance[0]}*** GP`)
+			.addField("Bank", `> ***${balance[1]}*** GP`)
 			.setTimestamp(new Date());
 
 		message.reply(embedBal);
