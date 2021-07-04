@@ -17,6 +17,7 @@ module.exports.getGP = async (userId, userName) => {
 			let gp = 500;
 			let bank = 0;
 			let size = Math.floor(Math.random() * 25) + 1;
+			let haram = Math.floor(Math.random() * 100) + 1;
 			if (result) {
 				gp = result.gp;
 				bank = result.bank;
@@ -27,10 +28,11 @@ module.exports.getGP = async (userId, userName) => {
 					gp,
 					bank,
 					size,
+					haram,
 				}).save();
 			}
 
-			(gpCache[`${userId}`] = result.gp), result.bank;
+			(gpCache[`${userId}`] = gp), bank;
 
 			return [gp, bank];
 		} finally {
@@ -79,6 +81,88 @@ module.exports.removeBal = async (userId, number) => {
 			gp = result.gp;
 
 			return gp + number;
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.withdraw = async (userId, number) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOneAndUpdate(
+				{
+					userId,
+				},
+				{
+					$inc: {
+						gp: number,
+						bank: -number,
+					},
+				}
+			);
+
+			gp = result.gp;
+			bank = result.bank;
+
+			return [gp + number, bank - number];
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.deposit = async (userId, number) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOneAndUpdate(
+				{
+					userId,
+				},
+				{
+					$inc: {
+						gp: -number,
+						bank: number,
+					},
+				}
+			);
+
+			gp = result.gp;
+			bank = result.bank;
+
+			return [gp - number, bank + number];
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.give = async (senderId, receiverID, number) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const bal = await profileSchema.findOneAndUpdate(
+				{
+					senderId,
+				},
+				{
+					$inc: {
+						gp: -number,
+					},
+				}
+			);
+
+			const bal1 = await profileSchema.findOneAndUpdate(
+				{
+					receiverID,
+				},
+				{
+					$inc: {
+						gp: number,
+					},
+				}
+			);
+
+			console.log(bal, bal1);
 		} finally {
 			mongoose.connection.close();
 		}

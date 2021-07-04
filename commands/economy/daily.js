@@ -16,7 +16,6 @@ module.exports = {
 
 		if (userDate === false)
 			return message.reply("You must wait until next day until you can claim your reward again.");
-		//const balance = await economy.addBal(message.author.id, 3000);
 
 		message.channel.send(
 			`Your daily reward of **3000** GP has been added to your balance. [Total balance: ${userDate[1]}]`
