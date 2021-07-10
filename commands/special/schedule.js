@@ -93,7 +93,7 @@ module.exports = {
 											"What campaign are you playing?",
 											"Who is the DM?",
 											"What is the whereabout of the session?",
-											`What do you want the message at "${displayTime2}"`,
+											`What do you want the reminder message at "${displayTime2}" to be?`,
 									  ]
 									: [
 											"What do you want the description to be?",
@@ -107,7 +107,7 @@ module.exports = {
 											"What do you want the description to be?",
 											"What game are you playing?",
 											"Any additional notes?",
-											`What do you want the message at "${displayTime2}"`,
+											`What do you want the reminder message at "${displayTime2}" to be?`,
 									  ]
 									: [
 											"What do you want the description to be?",
@@ -119,7 +119,7 @@ module.exports = {
 										"What do you want the description to be?",
 										"What are you doing?",
 										"Any additional notes?",
-										`What do you want the message at "${displayTime2}"`,
+										`What do you want the reminder message at "${displayTime2}" to be?`,
 								  ]
 								: [
 										"What do you want the description to be?",
@@ -503,7 +503,7 @@ module.exports = {
 
 							userIds.forEach((id) => {
 								bot.users.fetch(id).then((dm) => {
-									dm.send(config[5]);
+									dm.send(`Reminder for the event at ${displayTime}: ${config[5]}`);
 								});
 							});
 						}, timer1);

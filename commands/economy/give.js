@@ -8,7 +8,7 @@ module.exports = {
 	args: true,
 	minArgs: 1,
 	maxArgs: 1,
-	cooldown: 3,
+	cooldown: 10,
 	usage: "<amount you want to give>",
 	async execute(message, args) {
 		const mentionedUser = message.mentions.users.first();
