@@ -49,7 +49,16 @@ module.exports = {
 			guild: { memberCount },
 		} = message;
 		if (isNaN(timer1, timer2)) {
-			return message.reply("That is not correctly formatted, example: `<2000-01-01T12:00>`");
+			message.delete({
+				timeout: 10000,
+			});
+			return message
+				.reply("That is not correctly formatted, example: `<2000-01-01T12:00>`")
+				.then((message) => {
+					message.delete({
+						timeout: 10000,
+					});
+				});
 		}
 		message.reply("Check your DM'S").then((msg) =>
 			msg.delete({

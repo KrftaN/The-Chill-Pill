@@ -22,10 +22,10 @@ module.exports = {
 
 			if (args[2] > validate[0]) return message.channel.send("haha cant do that ur too poor");
 
-			economy.give(message.author.id, mentionedUser.id, args[1]);
+			const usersBal = await economy.give(message.author.id, mentionedUser.id, args[1]);
 
 			message.channel.send(
-				`You have successfully given **${args[1]}** GP to **${mentionedUser.username}'s** balance`
+				`You have successfully given **${args[1]}** GP to **${mentionedUser.username}'s** balance. [Total Balance: ${usersBal}]`
 			);
 		} catch (err) {
 			console.log(err);

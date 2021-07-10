@@ -95,8 +95,14 @@ bot.on("message", async (message) => {
 			if (command.usage) {
 				reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
 			}
-
-			return message.channel.send(reply);
+			message.delete({
+				timeout: 10000,
+			});
+			return message.channel.send(reply).then((message) => {
+				message.delete({
+					timeout: 10000,
+				});
+			});
 		}
 
 		const { cooldowns } = bot;

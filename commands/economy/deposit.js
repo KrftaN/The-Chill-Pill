@@ -33,7 +33,6 @@ module.exports = {
 
 			message.channel.send(`You successfully deposited ${args[0]}. Total balance:`, embedBal);
 		} catch (err) {
-			message.channel.send("`<amount which you want to deposit>`");
 			console.log(err);
 		}
 	},

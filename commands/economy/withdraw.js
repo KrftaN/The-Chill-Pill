@@ -33,7 +33,6 @@ module.exports = {
 
 			message.channel.send(`You successfully withdrawn ${args[0]}. Total balance:`, embedBal);
 		} catch (err) {
-			message.channel.send(".bank [dep, wit or info] [The amount which you wish to dep or wit].");
 			console.log(err);
 		}
 	},

@@ -52,12 +52,16 @@ module.exports.addBal = async (userId, number) => {
 					$inc: {
 						gp: number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
 			gp = result.gp;
 
-			return gp + number;
+			return gp;
 		} finally {
 			mongoose.connection.close();
 		}
@@ -75,12 +79,16 @@ module.exports.removeBal = async (userId, number) => {
 					$inc: {
 						gp: -number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
 			gp = result.gp;
 
-			return gp + number;
+			return gp;
 		} finally {
 			mongoose.connection.close();
 		}
@@ -99,13 +107,17 @@ module.exports.withdraw = async (userId, number) => {
 						gp: number,
 						bank: -number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
 			gp = result.gp;
 			bank = result.bank;
 
-			return [gp + number, bank - number];
+			return [gp, bank];
 		} finally {
 			mongoose.connection.close();
 		}
@@ -124,13 +136,17 @@ module.exports.deposit = async (userId, number) => {
 						gp: -number,
 						bank: number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
 			gp = result.gp;
 			bank = result.bank;
 
-			return [gp - number, bank + number];
+			return [gp, bank];
 		} finally {
 			mongoose.connection.close();
 		}
@@ -139,30 +155,40 @@ module.exports.deposit = async (userId, number) => {
 
 module.exports.give = async (senderId, receiverID, number) => {
 	return await mongo().then(async (mongoose) => {
+		console.log(senderId, receiverID, number);
+
 		try {
-			const bal = await profileSchema.findOneAndUpdate(
+			const bal1 = await profileSchema.findOneAndUpdate(
 				{
-					senderId,
+					userId: senderId,
 				},
 				{
 					$inc: {
 						gp: -number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
-			const bal1 = await profileSchema.findOneAndUpdate(
+			const bal2 = await profileSchema.findOneAndUpdate(
 				{
-					receiverID,
+					userId: receiverID,
 				},
 				{
 					$inc: {
 						gp: number,
 					},
+				},
+				{
+					upsert: true,
+					new: true,
 				}
 			);
 
-			console.log(bal, bal1);
+			return bal2.gp;
 		} finally {
 			mongoose.connection.close();
 		}
