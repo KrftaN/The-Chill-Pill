@@ -62,7 +62,6 @@ module.exports = {
 
 		const getConfig = new Promise((resolve, reject) => {
 			let i = 0;
-			let userData;
 			let originalChanel;
 			message.author
 				.send(functions.embedify("Choose preset. `<d&d>, <game event> or <event>`"))
@@ -72,7 +71,7 @@ module.exports = {
 					const collector = m.channel.createMessageCollector(
 						(me) => me.author.id === message.author.id && me.channel === m.channel,
 						{
-							time: 120 * 1000,
+							time: 300 * 1000,
 						}
 					);
 					collector.on("collect", (collected) => {
@@ -120,7 +119,7 @@ module.exports = {
 								  ];
 						userData = collected.channel;
 
-						switch (config[0]) {
+						switch (config[0].toLowerCase()) {
 							case "dnd":
 							case "d&d":
 							case "dungeons and dragons":
