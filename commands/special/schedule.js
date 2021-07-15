@@ -85,6 +85,7 @@ module.exports = {
 					);
 					collector.on("collect", (collected) => {
 						config.push(collected.content);
+
 						const configQuestions =
 							embedPref === 1
 								? timer1 >= 0
