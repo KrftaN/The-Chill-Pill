@@ -9,8 +9,8 @@ const { token } = require("../../jsonFiles/config.json");
 bot.login(token);
 
 module.exports = {
-	name: "schedule",
-	aliases: ["schedule", "s"],
+	name: "event",
+	aliases: ["event", "schedule"],
 	description: "",
 	args: true,
 	minArgs: 1,
@@ -53,7 +53,9 @@ module.exports = {
 				timeout: 10000,
 			});
 			return message
-				.reply("That is not correctly formatted, example: `<2000-01-01T12:00>`")
+				.reply(
+					`That is not correctly formatted, example: \`<2000-01-01T12:00>\` current date in ISO format: \`${dateNow.toISO()}\``
+				)
 				.then((message) => {
 					message.delete({
 						timeout: 10000,
@@ -66,26 +68,76 @@ module.exports = {
 			})
 		);
 
-		let config = [];
+		let config = new Array();
 		message.channel.bulkDelete(1);
 
 		const getConfig = new Promise((resolve, reject) => {
-			let i = 0;
+			let i = 1;
 			let originalChanel;
 			message.author
 				.send(functions.embedify("Choose preset. `<d&d>, <game event> or <event>`"))
-				.then((m) => {
+				.then(async (m) => {
 					originalChanel = message.channel.name;
+					m.react("1️⃣");
+					m.react("2️⃣");
+					m.react("3️⃣");
 
-					const collector = m.channel.createMessageCollector(
+ 					const reactionFilter = (reaction, user) => {
+						return ["1️⃣", "2️⃣", "3️⃣"].includes(reaction.emoji.name) && !user.bot;
+					};
+
+					// Create the collector
+					const reactionCollector = m.createReactionCollector(reactionFilter, {
+						time: 10000, //timer2
+					});
+
+					await reactionCollector.on("collect", async (reaction) => {
+						console.log(reaction._emoji.name);
+
+						switch (reaction._emoji.name) {
+							case "1️⃣":
+								embedPref = 1;
+								reactionCollector.stop();
+
+								break;
+							case "2️⃣":
+								reactionCollector.stop();
+								embedPref = 3;
+								break;
+							case "3️⃣":
+								reactionCollector.stop();
+								embedPref = 2;
+								break;
+							default:
+								reject();
+								collected.channel.send("Something went wrong, please try again");
+								reactionCollector.stop();
+								break;
+						}
+					});
+
+					await reactionCollector.on("end", (collected, reason) => {
+						if (reason === "time") {
+							reject();
+							return m.channel.send(
+								`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
+							);
+						}
+
+						m.edit(
+							functions.embedify(
+								`chose \`${embedPref === 1 ? "D&D" : embedPref === 2 ? "Game Event" : "Event"}\``
+							)
+						);
+						m.channel.send(functions.embedify(`What do you want the description to be?`));
+					});
+					const messageCollector = m.channel.createMessageCollector(
 						(me) => me.author.id === message.author.id && me.channel === m.channel,
 						{
 							time: 300 * 1000,
 						}
 					);
-					collector.on("collect", (collected) => {
-						config.push(collected.content);
-
+					messageCollector.on("collect", (collected) => {
 						const configQuestions =
 							embedPref === 1
 								? timer1 >= 0
@@ -127,56 +179,23 @@ module.exports = {
 										"What are you doing?",
 										"Any additional notes?",
 								  ];
+
 						userData = collected.channel;
 
-						switch (config[0].toLowerCase()) {
-							case "dnd":
-							case "d&d":
-							case "dungeons and dragons":
-								if (i >= configQuestions.length) {
-									resolve();
-									collected.channel.send(
-										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
-									);
-									collector.stop();
-									return;
-								}
-
-								embedPref = 1;
-								collected.channel.send(functions.embedify(configQuestions[i]));
-								break;
-							case "game event":
-								if (i >= configQuestions.length) {
-									resolve();
-									collected.channel.send(
-										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
-									);
-									collector.stop();
-									return;
-								}
-								embedPref = 2;
-								collected.channel.send(functions.embedify(configQuestions[i]));
-								break;
-							case "event":
-								if (i >= configQuestions.length) {
-									resolve();
-									collected.channel.send(
-										functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
-									);
-									collector.stop();
-									return;
-								}
-								collected.channel.send(functions.embedify(configQuestions[i]));
-								break;
-							default:
-								reject();
-								collected.channel.send("Something went wrong, try again");
-								collector.stop();
-								break;
+						if (i >= configQuestions.length) {
+							resolve();
+							collected.channel.send(
+								functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
+							);
+							messageCollector.stop();
+							return;
 						}
+
+						m.channel.send(functions.embedify(configQuestions[i]));
+						config.push(collected.content);
 						i += 1;
 					});
-					collector.on("end", (collected, reason) => {
+					messageCollector.on("end", (collected, reason) => {
 						if (reason === "time")
 							return (
 								reject(),
@@ -196,13 +215,13 @@ module.exports = {
 			const dndEmbed = new Discord.MessageEmbed()
 				.setTitle(`**D&D** at ${displayTime}`)
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
-				.setDescription(config[1])
+				.setDescription(config[0])
 				.setColor("DC143C")
 				.addFields(
 					{ name: "\u200B", value: "\u200B" },
-					{ name: "Campaign:", value: `${config[2]}`, inline: true },
-					{ name: "DM:", value: `${config[3]}`, inline: true },
-					{ name: "Whereabout:", value: `${config[4]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
+					{ name: "Campaign:", value: `${config[1]}`, inline: true },
+					{ name: "DM:", value: `${config[2]}`, inline: true },
+					{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 					{ name: "\u200B", value: "\u200B" },
 					{
 						name: `Accepted (0/${memberCount})`,
@@ -229,12 +248,12 @@ module.exports = {
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 				)
-				.setDescription(config[1])
+				.setDescription(config[0])
 				.setColor("DC143C")
 				.addFields(
 					{ name: "\u200B", value: "\u200B" },
-					{ name: "Game:", value: `${config[2]}`, inline: true },
-					{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
+					{ name: "Game:", value: `${config[1]}`, inline: true },
+					{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
 						name: `Accepted (0/${memberCount})`,
@@ -261,12 +280,12 @@ module.exports = {
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 				)
-				.setDescription(config[1])
+				.setDescription(config[0])
 				.setColor("DC143C")
 				.addFields(
 					{ name: "\u200B", value: "\u200B" },
-					{ name: "Event:", value: `${config[2]}`, inline: true },
-					{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
+					{ name: "Event:", value: `${config[1]}`, inline: true },
+					{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
 						name: `Accepted (0/${memberCount})`,
@@ -379,13 +398,13 @@ module.exports = {
 						const upatedDndEmbed = new Discord.MessageEmbed()
 							.setTitle(`**D&D** at ${displayTime}`)
 							.setThumbnail("https://i.imgur.com/u0aN19t.png")
-							.setDescription(config[1])
+							.setDescription(config[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Campaign:", value: `${config[2]}`, inline: true },
-								{ name: "DM:", value: `${config[3]}`, inline: true },
-								{ name: "Whereabout:", value: `${config[4]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
+								{ name: "Campaign:", value: `${config[1]}`, inline: true },
+								{ name: "DM:", value: `${config[2]}`, inline: true },
+								{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -411,12 +430,12 @@ module.exports = {
 							.setThumbnail(
 								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 							)
-							.setDescription(config[1])
+							.setDescription(config[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Game:", value: `${config[2]}`, inline: true },
-								{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
+								{ name: "Game:", value: `${config[1]}`, inline: true },
+								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -442,12 +461,12 @@ module.exports = {
 							.setThumbnail(
 								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 							)
-							.setDescription(config[1])
+							.setDescription(config[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Event:", value: `${config[2]}`, inline: true },
-								{ name: "Additional Notes:", value: `${config[3]}`, inline: true },
+								{ name: "Event:", value: `${config[1]}`, inline: true },
+								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -496,6 +515,8 @@ module.exports = {
 						});
 					});
 
+					console.log(timer1 >= 0);
+
 					if (timer1 >= 0) {
 						setTimeout(async () => {
 							const userIds = await scheduleDB.getScheduleIds(embedId);
@@ -504,7 +525,7 @@ module.exports = {
 
 							userIds.forEach((id) => {
 								bot.users.fetch(id).then((dm) => {
-									dm.send(`Reminder for the event at ${displayTime}: ${config[5]}`);
+									dm.send(`Reminder for the event at ${displayTime}: ${config[config.length - 1]}`);
 								});
 							});
 						}, timer1);

@@ -19,8 +19,8 @@ module.exports = {
 				"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 			)
 			.addField("Admin", "kick, ban, clear")
-			.addField("Misc", "dm, say, ping, roast, info, size")
-			.addField("D&D", "roll, schedule")
+			.addField("Misc", "dm, say, ping, roast, info, size, event")
+			.addField("D&D", "roll")
 			.addField("Economy", "bal, invest, give, daily, beg, coinflip, shop, inv, use, sell, buy")
 			.addField("Prefix", `**\`${prefix}\`**`)
 			.setTimestamp();

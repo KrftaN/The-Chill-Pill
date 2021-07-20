@@ -424,7 +424,6 @@ module.exports.iniateSchedule = async (messageId) => {
 				accepted = result.accepted;
 				tentative = result.tentative;
 				denied = result.denied;
-
 				acceptedIds = result.acceptedIds;
 			} else {
 				await new scheduleSchema({
