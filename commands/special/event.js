@@ -64,10 +64,6 @@ module.exports = {
 			dateThen = DateTime.fromISO(args[0]).toMillis();
 		}
 
-		// Hello
-
-		console.log("Hello");
-
 		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
 
 		const timer1 = dateThen - dateNow - 3600000;
