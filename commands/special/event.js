@@ -10,18 +10,56 @@ bot.login(token);
 
 module.exports = {
 	name: "event",
-	aliases: ["event", "schedule"],
-	description: "",
+	aliases: ["event", "schedule", "e"],
+	description: "This is where you can schedule events ect.",
 	args: true,
 	minArgs: 1,
 	cooldown: 1,
+	guildOnly: true,
 	usage: "<2000-01-01T12:00>",
 	execute(message, args) {
 		let scheduleInfo;
 		let embedId;
 		let embedPref;
+
+		let dateThen;
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
-		const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
+
+		const argsLower = args.map(function (arg) {
+			return arg.toLowerCase();
+		});
+
+		if (argsLower.includes("in")) {
+			const fix1 = argsLower.includes("hour")
+				? "hour"
+				: argsLower.includes("hours")
+				? "hours"
+				: false;
+			const fix2 = argsLower.includes("minute")
+				? "minute"
+				: argsLower.includes("minutes")
+				? "minutes"
+				: false;
+
+			const hours = fix1 === false ? 0 : argsLower[argsLower.indexOf(fix1) - 1];
+			const minutes = fix2 === false ? 0 : argsLower[argsLower.indexOf(fix2) - 1];
+
+			dateThen = DateTime.fromMillis(dateNow).plus({ hours, minutes }).toMillis();
+		} else if (argsLower.includes("today") || argsLower.includes("td")) {
+			const isoFormat = DateTime.fromMillis(dateNow).toISO();
+
+			dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`).toMillis();
+		} else if (argsLower.includes("tm") || argsLower.includes("tomorrow")) {
+			const isoFormat = DateTime.fromMillis(dateNow).toISO();
+
+			dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`)
+				.plus({ days: 1 })
+				.toMillis();
+		} else {
+			dateThen = DateTime.fromISO(args[0]).toMillis();
+		}
+
+		//const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
 
 		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
 
@@ -50,15 +88,23 @@ module.exports = {
 		} = message;
 		if (isNaN(timer1, timer2)) {
 			message.delete({
-				timeout: 10000,
+				timeout: 20 * 1000,
 			});
 			return message
 				.reply(
-					`That is not correctly formatted, example: \`<2000-01-01T12:00>\` current date in ISO format: \`${dateNow.toISO()}\``
+					`
+					That is not correctly formatted, examples: 
+					\`<2000-01-01T12:00>\` 
+					\`in 4 hours 20 minutes\`
+					\`in 3 hours\`
+					\`in 45 minutes\` 
+					\`today[td] 15:45\` 
+					\`tomorrow[tm] 15:45\` 
+					current date in ISO format: \`${DateTime.fromMillis(dateNow).toISO()}\``
 				)
 				.then((message) => {
 					message.delete({
-						timeout: 10000,
+						timeout: 20 * 1000,
 					});
 				});
 		}
@@ -82,18 +128,16 @@ module.exports = {
 					m.react("2️⃣");
 					m.react("3️⃣");
 
- 					const reactionFilter = (reaction, user) => {
+					const reactionFilter = (reaction, user) => {
 						return ["1️⃣", "2️⃣", "3️⃣"].includes(reaction.emoji.name) && !user.bot;
 					};
 
 					// Create the collector
 					const reactionCollector = m.createReactionCollector(reactionFilter, {
-						time: 10000, //timer2
+						time: 60 * 1000, //timer2
 					});
 
 					await reactionCollector.on("collect", async (reaction) => {
-						console.log(reaction._emoji.name);
-
 						switch (reaction._emoji.name) {
 							case "1️⃣":
 								embedPref = 1;
@@ -101,111 +145,112 @@ module.exports = {
 
 								break;
 							case "2️⃣":
+								embedPref = 2;
 								reactionCollector.stop();
-								embedPref = 3;
+
 								break;
 							case "3️⃣":
+								embedPref = 3;
 								reactionCollector.stop();
-								embedPref = 2;
-								break;
-							default:
-								reject();
-								collected.channel.send("Something went wrong, please try again");
-								reactionCollector.stop();
+
 								break;
 						}
 					});
 
-					await reactionCollector.on("end", (collected, reason) => {
+					reactionCollector.on("end", (collected, reason) => {
 						if (reason === "time") {
 							reject();
 							return m.channel.send(
 								`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
 							);
 						}
-
 						m.edit(
 							functions.embedify(
 								`chose \`${embedPref === 1 ? "D&D" : embedPref === 2 ? "Game Event" : "Event"}\``
 							)
 						);
 						m.channel.send(functions.embedify(`What do you want the description to be?`));
+
+						messageCollecting();
 					});
-					const messageCollector = m.channel.createMessageCollector(
-						(me) => me.author.id === message.author.id && me.channel === m.channel,
-						{
-							time: 300 * 1000,
-						}
-					);
-					messageCollector.on("collect", (collected) => {
-						const configQuestions =
-							embedPref === 1
-								? timer1 >= 0
+
+					function messageCollecting() {
+						const messageCollector = m.channel.createMessageCollector(
+							(me) => me.author.id === message.author.id && me.channel === m.channel,
+							{
+								time: 300 * 1000,
+							}
+						);
+						messageCollector.on("collect", (collected) => {
+							const configQuestions =
+								embedPref === 1
+									? timer1 - 100 >= 0
+										? [
+												"What do you want the description to be?",
+												"What campaign are you playing?",
+												"Who is the DM?",
+												"What is the whereabout of the session?",
+												`What do you want the reminder message at "${displayTime2}" to be?`,
+										  ]
+										: [
+												"What do you want the description to be?",
+												"What campaign are you playing?",
+												"Who is the DM?",
+												"What is the whereabout of the session?",
+										  ]
+									: embedPref === 2
+									? timer1 - 100 >= 0
+										? [
+												"What do you want the description to be?",
+												"What game are you playing?",
+												"Any additional notes?",
+												`What do you want the reminder message at "${displayTime2}" to be?`,
+										  ]
+										: [
+												"What do you want the description to be?",
+												"What game are you playing?",
+												"Any additional notes?",
+										  ]
+									: timer1 - 100 >= 0
 									? [
 											"What do you want the description to be?",
-											"What campaign are you playing?",
-											"Who is the DM?",
-											"What is the whereabout of the session?",
-											`What do you want the reminder message at "${displayTime2}" to be?`,
-									  ]
-									: [
-											"What do you want the description to be?",
-											"What campaign are you playing?",
-											"Who is the DM?",
-											"What is the whereabout of the session?",
-									  ]
-								: embedPref === 2
-								? timer1 >= 0
-									? [
-											"What do you want the description to be?",
-											"What game are you playing?",
+											"What are you doing?",
 											"Any additional notes?",
 											`What do you want the reminder message at "${displayTime2}" to be?`,
 									  ]
 									: [
 											"What do you want the description to be?",
-											"What game are you playing?",
+											"What are you doing?",
 											"Any additional notes?",
-									  ]
-								: timer1 >= 0
-								? [
-										"What do you want the description to be?",
-										"What are you doing?",
-										"Any additional notes?",
-										`What do you want the reminder message at "${displayTime2}" to be?`,
-								  ]
-								: [
-										"What do you want the description to be?",
-										"What are you doing?",
-										"Any additional notes?",
-								  ];
+									  ];
 
-						userData = collected.channel;
+							userData = collected.channel;
+							config.push(collected.content);
+							if (i >= configQuestions.length) {
+								resolve();
+								collected.channel.send(
+									functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
+								);
+								messageCollector.stop();
+								return;
+							}
 
-						if (i >= configQuestions.length) {
-							resolve();
-							collected.channel.send(
-								functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)
-							);
-							messageCollector.stop();
-							return;
-						}
+							m.channel.send(functions.embedify(configQuestions[i]));
 
-						m.channel.send(functions.embedify(configQuestions[i]));
-						config.push(collected.content);
-						i += 1;
-					});
-					messageCollector.on("end", (collected, reason) => {
-						if (reason === "time")
-							return (
-								reject(),
-								message.author.send(
-									`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
-								)
-							);
+							i += 1;
+						});
+						messageCollector.on("end", (collected, reason) => {
+							if (reason === "time")
+								return (
+									reject(),
+									message.author.send(
+										`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
+									)
+								);
 
-						return config;
-					});
+							return config;
+						});
+					}
 				});
 		});
 
@@ -224,18 +269,18 @@ module.exports = {
 					{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount})`,
+						name: `<:accepted:867150417271324672>Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Unsure (0/${memberCount})`,
+						name: `<:unsure:867150452423131166>Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount})`,
+						name: `<:denied:867150431612436510>Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -256,18 +301,18 @@ module.exports = {
 					{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount})`,
+						name: `<:accepted:867150417271324672>Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Unsure (0/${memberCount})`,
+						name: `<:unsure:867150452423131166>Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount})`,
+						name: `<:denied:867150431612436510>Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -288,18 +333,18 @@ module.exports = {
 					{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 					{ name: "\u200B", value: "\u200B" },
 					{
-						name: `Accepted (0/${memberCount})`,
+						name: `<:accepted:867150417271324672>Accepted (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 
 					{
-						name: `Unsure (0/${memberCount})`,
+						name: `<:unsure:867150452423131166>Unsure (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					},
 					{
-						name: `Denied (0/${memberCount})`,
+						name: `<:denied:867150431612436510>Denied (0/${memberCount})`,
 						value: "-",
 						inline: true,
 					}
@@ -313,9 +358,9 @@ module.exports = {
 					embedPref === 1 ? dndEmbed : embedPref === 2 ? gameEventEmbed : eventEmbed
 				)
 				.then(async (message) => {
-					message.react("✅");
-					message.react("❔");
-					message.react("❌");
+					message.react("<:accepted:867150417271324672>");
+					message.react("<:unsure:867150452423131166>");
+					message.react("<:denied:867150431612436510>");
 					message.react("🗑️");
 
 					embedId = message.id;
@@ -324,7 +369,9 @@ module.exports = {
 
 					// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 					const filter = (reaction, user) => {
-						return ["✅", "❌", "❔", "🗑️"].includes(reaction.emoji.name) && !user.bot;
+						return (
+							["accepted", "denied", "unsure", "🗑️"].includes(reaction.emoji.name) && !user.bot
+						);
 					};
 
 					// Create the collector
@@ -338,11 +385,11 @@ module.exports = {
 						const emoji = reaction._emoji.name;
 
 						const emojiName =
-							emoji === "✅"
+							emoji === "accepted"
 								? "accepted"
-								: emoji === "❌"
+								: emoji === "denied"
 								? "denied"
-								: emoji === "❔"
+								: emoji === "unsure"
 								? "tentative"
 								: "delete";
 
@@ -407,17 +454,17 @@ module.exports = {
 								{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
+									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
+									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
+									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -438,17 +485,17 @@ module.exports = {
 								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
+									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
+									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
+									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -469,17 +516,17 @@ module.exports = {
 								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
-									name: `Accepted (${scheduleInfo[0].length}/${memberCount})`,
+									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
 									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
 									inline: true,
 								},
 								{
-									name: `Unsure (${scheduleInfo[2].length}/${memberCount})`,
+									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
 									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
 									inline: true,
 								},
 								{
-									name: `Denied (${scheduleInfo[1].length}/${memberCount})`,
+									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
 									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
 									inline: true,
 								}
@@ -515,10 +562,10 @@ module.exports = {
 						});
 					});
 
-					console.log(timer1 >= 0);
-
-					if (timer1 >= 0) {
+					if (timer1 - 100 >= 0) {
 						setTimeout(async () => {
+							await scheduleDB.iniateSchedule(embedId);
+
 							const userIds = await scheduleDB.getScheduleIds(embedId);
 
 							if (!userIds.length === 0) return;

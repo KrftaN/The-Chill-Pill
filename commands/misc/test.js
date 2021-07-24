@@ -13,6 +13,9 @@ module.exports = {
 	cooldown: 0,
 	args: false,
 	execute(message, args, guild) {
-		message.channel.send("This test worked!");
+		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
+		const dateThen = DateTime.fromISO(
+			`${dateNow.fromMillis().toISO().slice(0, 10)}T${args[1]}`
+		).toMillis(); // 2021-06-18T14:30:00
 	},
 };
