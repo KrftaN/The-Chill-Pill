@@ -17,6 +17,12 @@ module.exports = {
 	cooldown: 1,
 	guildOnly: true,
 	usage: "<2000-01-01T12:00>",
+	usage: `<2000-01-01T12:00> 
+	<in 4 hours 20 minutes>
+	<in 3 hours>
+	<in 45 minutes> 
+	<today[or td] 15:45> 
+	<tomorrow[or tm] 15:45>`,
 	execute(message, args) {
 		let scheduleInfo;
 		let embedId;
@@ -59,8 +65,6 @@ module.exports = {
 			dateThen = DateTime.fromISO(args[0]).toMillis();
 		}
 
-		//const dateThen = DateTime.fromISO(args[0]).toMillis(); // 2021-06-18T14:30:00
-
 		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
 
 		const timer1 = dateThen - dateNow - 3600000;
@@ -95,12 +99,12 @@ module.exports = {
 					`
 					That is not correctly formatted, examples: 
 					\`<2000-01-01T12:00>\` 
-					\`in 4 hours 20 minutes\`
-					\`in 3 hours\`
-					\`in 45 minutes\` 
-					\`today[td] 15:45\` 
-					\`tomorrow[tm] 15:45\` 
-					current date in ISO format: \`${DateTime.fromMillis(dateNow).toISO()}\``
+					\`<in 4 hours 20 minutes>\`
+					\`<in 3 hours>\`
+					\`<in 45 minutes>\` 
+					\`<today[or td] 15:45>\` 
+					\`<tomorrow[or tm] 15:45>\` 
+					current date in ISO format: \`${DateTime.fromMillis(dateNow).toISO().slice(0, 16)}\``
 				)
 				.then((message) => {
 					message.delete({
