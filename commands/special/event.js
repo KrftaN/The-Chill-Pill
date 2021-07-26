@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const scheduleDB = require("../../utility/mongodbFramework");
+const eventDB = require("../../utility/mongodbFramework");
 const functions = require("../../utility/functions.js");
 
 const { token } = require("../../jsonFiles/config.json");
@@ -364,16 +364,22 @@ module.exports = {
 					message.react("<:accepted:867150417271324672>");
 					message.react("<:unsure:867150452423131166>");
 					message.react("<:denied:867150431612436510>");
+					message.react("<:edit:868949197456551966>");
 					message.react("🗑️");
 
 					embedId = message.id;
 
-					scheduleDB.iniateSchedule(embedId);
+					if (embedPref !== 1) {
+						eventDB.iniateSchedule(embedId, config[0], config[1], config[2]);
+					} else eventDB.iniateSchedule(embedId, config[0], config[1], config[2], config[3]);
+
+					const eventConfig = await eventDB.getDisplayText(embedId);
 
 					// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 					const filter = (reaction, user) => {
 						return (
-							["accepted", "denied", "unsure", "🗑️"].includes(reaction.emoji.name) && !user.bot
+							["accepted", "denied", "unsure", "edit", "🗑️"].includes(reaction.emoji.name) &&
+							!user.bot
 						);
 					};
 
@@ -394,6 +400,8 @@ module.exports = {
 								? "denied"
 								: emoji === "unsure"
 								? "tentative"
+								: emoji === "edit"
+								? "edit"
 								: "delete";
 
 						if (emojiName === "delete" && user.id === originalSender) {
@@ -413,7 +421,7 @@ module.exports = {
 
 										if (emoji === "✅") {
 											msg.edit("You've successfully deleted the schedule");
-											scheduleDB.deleteSchedule(embedId);
+											eventDB.deleteSchedule(embedId);
 											collector.stop();
 											message.delete();
 											msg.delete({
@@ -443,18 +451,18 @@ module.exports = {
 						const {
 							message: { id },
 						} = reaction;
-						scheduleInfo = await scheduleDB.changeSchedule(id, user.username, user.id, emojiName);
+						scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
 
 						const upatedDndEmbed = new Discord.MessageEmbed()
 							.setTitle(`**D&D** at ${displayTime}`)
 							.setThumbnail("https://i.imgur.com/u0aN19t.png")
-							.setDescription(config[0])
+							.setDescription(eventConfig[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Campaign:", value: `${config[1]}`, inline: true },
-								{ name: "DM:", value: `${config[2]}`, inline: true },
-								{ name: "Whereabout:", value: `${config[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
+								{ name: "Campaign:", value: `${eventConfig[1]}`, inline: true },
+								{ name: "DM:", value: `${eventConfig[2]}`, inline: true },
+								{ name: "Whereabout:", value: `${eventConfig[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -480,12 +488,12 @@ module.exports = {
 							.setThumbnail(
 								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 							)
-							.setDescription(config[0])
+							.setDescription(eventConfig[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Game:", value: `${config[1]}`, inline: true },
-								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
+								{ name: "Game:", value: `${eventConfig[1]}`, inline: true },
+								{ name: "Additional Notes:", value: `${eventConfig[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -511,12 +519,12 @@ module.exports = {
 							.setThumbnail(
 								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
 							)
-							.setDescription(config[0])
+							.setDescription(eventConfig[0])
 							.setColor("DC143C")
 							.addFields(
 								{ name: "\u200B", value: "\u200B" },
-								{ name: "Event:", value: `${config[1]}`, inline: true },
-								{ name: "Additional Notes:", value: `${config[2]}`, inline: true },
+								{ name: "Event:", value: `${eventConfig[1]}`, inline: true },
+								{ name: "Additional Notes:", value: `${eventConfig[2]}`, inline: true },
 								{ name: "\u200B", value: "\u200B" },
 								{
 									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
@@ -558,7 +566,7 @@ module.exports = {
 								}`
 							)
 						);
-						scheduleDB.deleteSchedule(embedId);
+						eventDB.deleteSchedule(embedId);
 
 						message.delete({
 							timeout: 43200000,
@@ -567,9 +575,9 @@ module.exports = {
 
 					if (timer1 - 100 >= 0) {
 						setTimeout(async () => {
-							await scheduleDB.iniateSchedule(embedId);
+							await eventDB.validateSchedule(embedId);
 
-							const userIds = await scheduleDB.getScheduleIds(embedId);
+							const userIds = await eventDB.getScheduleIds(embedId);
 
 							if (!userIds.length === 0) return;
 

@@ -155,8 +155,6 @@ module.exports.deposit = async (userId, number) => {
 
 module.exports.give = async (senderId, receiverID, number) => {
 	return await mongo().then(async (mongoose) => {
-		console.log(senderId, receiverID, number);
-
 		try {
 			const bal1 = await profileSchema.findOneAndUpdate(
 				{
@@ -409,31 +407,100 @@ module.exports.getScheduleIds = async (messageId) => {
 	});
 };
 
-module.exports.iniateSchedule = async (messageId) => {
+module.exports.validateSchedule = async (messageId) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			const result = await scheduleSchema.findOne({
 				messageId,
 			});
 
+			console.log(result, "displaying result 1");
+
 			let accepted = [];
 			let denied = [];
 			let tentative = [];
-			let acceptedIds = [];
+
 			if (result) {
-				accepted = result.accepted;
-				tentative = result.tentative;
-				denied = result.denied;
-				acceptedIds = result.acceptedIds;
+				return;
 			} else {
 				await new scheduleSchema({
 					messageId,
 					accepted,
 					tentative,
 					denied,
-					acceptedIds,
 				}).save();
 			}
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.iniateSchedule = async (
+	messageId,
+	displayText1,
+	displayText2,
+	displayText3,
+	...displayText4
+) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			let accepted = [];
+			let denied = [];
+			let tentative = [];
+
+			if (displayText4.length > 0) {
+				console.log("Option 1");
+
+				await new scheduleSchema({
+					messageId,
+					accepted,
+					tentative,
+					denied,
+					acceptedIds,
+					displayText1,
+					displayText2,
+					displayText3,
+					...displayText4,
+				}).save();
+			} else {
+				console.log("Option 2");
+
+				await new scheduleSchema({
+					messageId,
+					accepted,
+					tentative,
+					denied,
+					acceptedIds,
+					displayText1,
+					displayText2,
+					displayText3,
+				}).save();
+			}
+
+			const result = await scheduleSchema.findOne({
+				messageId,
+			});
+
+			console.log(result, "displaying result 1");
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.getDisplayText = async (messageId) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			console.log(messageId);
+
+			const result = await scheduleSchema.findOne({
+				messageId,
+			});
+
+			console.log(result, "displaying result 2");
+
+			return [result.displayText1, result.displayText2, result.displayText3, result.displayText4];
 		} finally {
 			mongoose.connection.close();
 		}
