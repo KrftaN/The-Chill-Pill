@@ -414,8 +414,6 @@ module.exports.validateSchedule = async (messageId) => {
 				messageId,
 			});
 
-			console.log(result, "displaying result 1");
-
 			let accepted = [];
 			let denied = [];
 			let tentative = [];
@@ -441,16 +439,18 @@ module.exports.iniateSchedule = async (
 	displayText1,
 	displayText2,
 	displayText3,
-	...displayText4
+	displayText4
 ) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			let accepted = [];
 			let denied = [];
 			let tentative = [];
+			let acceptedIds = [];
+			displayText4 = displayText4 || 0;
 
 			if (displayText4.length > 0) {
-				console.log("Option 1");
+				console.log("option 1 (2)", displayText4);
 
 				await new scheduleSchema({
 					messageId,
@@ -461,10 +461,10 @@ module.exports.iniateSchedule = async (
 					displayText1,
 					displayText2,
 					displayText3,
-					...displayText4,
+					displayText4,
 				}).save();
 			} else {
-				console.log("Option 2");
+				console.log("option 2 (2)");
 
 				await new scheduleSchema({
 					messageId,
@@ -481,8 +481,6 @@ module.exports.iniateSchedule = async (
 			const result = await scheduleSchema.findOne({
 				messageId,
 			});
-
-			console.log(result, "displaying result 1");
 		} finally {
 			mongoose.connection.close();
 		}
@@ -492,13 +490,9 @@ module.exports.iniateSchedule = async (
 module.exports.getDisplayText = async (messageId) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			console.log(messageId);
-
 			const result = await scheduleSchema.findOne({
 				messageId,
 			});
-
-			console.log(result, "displaying result 2");
 
 			return [result.displayText1, result.displayText2, result.displayText3, result.displayText4];
 		} finally {

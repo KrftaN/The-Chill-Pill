@@ -9,7 +9,7 @@ const bot = new Discord.Client();
 bot.login(token);
 
 bot.commands = new Discord.Collection();
-bot.cooldowns = new Discord.Collection(); 
+bot.cooldowns = new Discord.Collection();
 
 const commandFolders = fs.readdirSync("./commands");
 
@@ -96,11 +96,11 @@ bot.on("message", async (message) => {
 				reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
 			}
 			message.delete({
-				timeout: 10000,
+				timeout: 25 * 1000,
 			});
 			return message.channel.send(reply).then((message) => {
 				message.delete({
-					timeout: 10000,
+					timeout: 25 * 1000,
 				});
 			});
 		}

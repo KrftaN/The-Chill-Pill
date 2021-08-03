@@ -16,7 +16,8 @@ module.exports = {
 	minArgs: 1,
 	cooldown: 1,
 	guildOnly: true,
-	usage: `<2000-01-01T12:00> 
+	usage: `
+	<2000-01-01T12:00> 
 	<in 4 hours 20 minutes>
 	<in 3 hours>
 	<in 45 minutes> 
@@ -34,34 +35,62 @@ module.exports = {
 			return arg.toLowerCase();
 		});
 
-		if (argsLower.includes("in")) {
-			const fix1 = argsLower.includes("hour")
-				? "hour"
-				: argsLower.includes("hours")
-				? "hours"
-				: false;
-			const fix2 = argsLower.includes("minute")
-				? "minute"
-				: argsLower.includes("minutes")
-				? "minutes"
-				: false;
+		try {
+			if (argsLower.includes("in")) {
+				const fix1 = argsLower.includes("hour")
+					? "hour"
+					: argsLower.includes("hours")
+					? "hours"
+					: false;
+				const fix2 = argsLower.includes("minute")
+					? "minute"
+					: argsLower.includes("minutes")
+					? "minutes"
+					: false;
 
-			const hours = fix1 === false ? 0 : argsLower[argsLower.indexOf(fix1) - 1];
-			const minutes = fix2 === false ? 0 : argsLower[argsLower.indexOf(fix2) - 1];
+				const hours = fix1 === false ? 0 : argsLower[argsLower.indexOf(fix1) - 1];
+				const minutes = fix2 === false ? 0 : argsLower[argsLower.indexOf(fix2) - 1];
 
-			dateThen = DateTime.fromMillis(dateNow).plus({ hours, minutes }).toMillis();
-		} else if (argsLower.includes("today") || argsLower.includes("td")) {
-			const isoFormat = DateTime.fromMillis(dateNow).toISO();
+				if (hours === 0 && minutes === 0) {
+					console.log("This is wrong!");
+					throw "Error!";
+				}
 
-			dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`).toMillis();
-		} else if (argsLower.includes("tm") || argsLower.includes("tomorrow")) {
-			const isoFormat = DateTime.fromMillis(dateNow).toISO();
+				dateThen = DateTime.fromMillis(dateNow).plus({ hours, minutes }).toMillis();
+			} else if (argsLower.includes("today") || argsLower.includes("td")) {
+				const isoFormat = DateTime.fromMillis(dateNow).toISO();
 
-			dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`)
-				.plus({ days: 1 })
-				.toMillis();
-		} else {
-			dateThen = DateTime.fromISO(args[0]).toMillis();
+				dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`).toMillis();
+			} else if (argsLower.includes("tm") || argsLower.includes("tomorrow")) {
+				const isoFormat = DateTime.fromMillis(dateNow).toISO();
+
+				dateThen = DateTime.fromISO(`${isoFormat.slice(0, 10)}T${args[1]}`)
+					.plus({ days: 1 })
+					.toMillis();
+			} else {
+				dateThen = DateTime.fromISO(args[0]).toMillis();
+			}
+		} catch (e) {
+			console.log(e);
+
+			message.delete();
+			return message
+				.reply(
+					`
+					That is not correctly formatted, examples: 
+					\`<2000-01-01T12:00>\` 
+					\`<in 4 hours 20 minutes>\`
+					\`<in 3 hours>\`
+					\`<in 45 minutes>\` 
+					\`<today[or td] 15:45>\` 
+					\`<tomorrow[or tm] 15:45>\` 
+					current date in ISO format: \`${DateTime.fromMillis(dateNow).toISO().slice(0, 16)}\``
+				)
+				.then((message) => {
+					message.delete({
+						timeout: 25 * 1000,
+					});
+				});
 		}
 
 		if (dateNow > dateThen) return message.reply("Cannot schedule a game in the past...");
@@ -107,7 +136,7 @@ module.exports = {
 				)
 				.then((message) => {
 					message.delete({
-						timeout: 20 * 1000,
+						timeout: 25 * 1000,
 					});
 				});
 		}
@@ -167,6 +196,7 @@ module.exports = {
 								`You ran out of time. Write \`.schedule <time>\` to reinitiate this command. `
 							);
 						}
+
 						m.edit(
 							functions.embedify(
 								`chose \`${embedPref === 1 ? "D&D" : embedPref === 2 ? "Game Event" : "Event"}\``
@@ -370,10 +400,10 @@ module.exports = {
 					embedId = message.id;
 
 					if (embedPref !== 1) {
-						eventDB.iniateSchedule(embedId, config[0], config[1], config[2]);
-					} else eventDB.iniateSchedule(embedId, config[0], config[1], config[2], config[3]);
-
-					const eventConfig = await eventDB.getDisplayText(embedId);
+						await eventDB.iniateSchedule(embedId, config[0], config[1], config[2]);
+					} else {
+						await eventDB.iniateSchedule(embedId, config[0], config[1], config[2], config[3]);
+					}
 
 					// Set a filter to ONLY grab those reactions & discard the reactions from the bot
 					const filter = (reaction, user) => {
@@ -404,9 +434,31 @@ module.exports = {
 								? "edit"
 								: "delete";
 
+						if (emojiName === "edit" && user.id === originalSender) {
+							message.channel
+								.send(
+									functions.embedify(
+										"Are you sure you want to delete this schedule? If not ignore this message,"
+									)
+								)
+								.then((msg) => {});
+						} else if (emojiName === "edit" && user.id !== originalSender) {
+							return message.channel
+								.send(functions.embedify("You cannot edit this embed!"))
+								.then((msg) =>
+									msg.delete({
+										timeout: 5000,
+									})
+								);
+						}
+
 						if (emojiName === "delete" && user.id === originalSender) {
 							message.channel
-								.send("Are you sure you want to delete this schedule? If not ignore this message,")
+								.send(
+									functions.embedify(
+										"Are you sure you want to delete this schedule? If not ignore this message."
+									)
+								)
 								.then((msg) => {
 									msg.react("✅");
 
@@ -420,7 +472,7 @@ module.exports = {
 										const emoji = reaction._emoji.name;
 
 										if (emoji === "✅") {
-											msg.edit("You've successfully deleted the schedule");
+											msg.edit(functions.embedify("You've successfully deleted the schedule"));
 											eventDB.deleteSchedule(embedId);
 											collector.stop();
 											message.delete();
@@ -433,7 +485,9 @@ module.exports = {
 									collector1.on("end", (collected, reason) => {
 										if (reason === "time") {
 											msg.edit(
-												"You ran out of time. React with the bin again to reinitiate this process"
+												functions.embedify(
+													"You ran out of time. React with the bin again to reinitiate this process"
+												)
 											);
 											msg.delete({
 												timeout: 7500,
@@ -452,6 +506,7 @@ module.exports = {
 							message: { id },
 						} = reaction;
 						scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
+						const eventConfig = await eventDB.getDisplayText(embedId);
 
 						const upatedDndEmbed = new Discord.MessageEmbed()
 							.setTitle(`**D&D** at ${displayTime}`)
