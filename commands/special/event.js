@@ -146,6 +146,102 @@ module.exports = {
 			})
 		);
 
+		function updateEmbed(option, displayInfo1, displayInfo2, displayInfo3, ...displayText) {
+			const upatedDndEmbed = new Discord.MessageEmbed()
+				.setTitle(`**D&D** at ${displayTime}`)
+				.setThumbnail("https://i.imgur.com/u0aN19t.png")
+				.setDescription(displayText[0])
+				.setColor("DC143C")
+				.addFields(
+					{ name: "\u200B", value: "\u200B" },
+					{ name: "Campaign:", value: `${displayText[1]}`, inline: true },
+					{ name: "DM:", value: `${displayText[2]}`, inline: true },
+					{ name: "Whereabout:", value: `${displayText[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
+					{ name: "\u200B", value: "\u200B" },
+					{
+						name: `<:accepted:867150417271324672>Accepted (${displayInfo1.length}/${memberCount})`,
+						value: displayInfo1.length !== 0 ? displayInfo1 : "-",
+						inline: true,
+					},
+					{
+						name: `<:unsure:867150452423131166>Unsure (${displayInfo2.length}/${memberCount})`,
+						value: displayInfo2.length !== 0 ? displayInfo2 : "-",
+						inline: true,
+					},
+					{
+						name: `<:denied:867150431612436510>Denied (${displayInfo3.length}/${memberCount})`,
+						value: displayInfo3.length !== 0 ? displayInfo3 : "-",
+						inline: true,
+					}
+				)
+				.setFooter(`This message was issued by ${msgSender}`)
+				.setTimestamp(new Date());
+
+			const upatedGameEventEmbed = new Discord.MessageEmbed()
+				.setTitle(`**Game Event** at ${displayTime}`)
+				.setThumbnail(
+					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
+				)
+				.setDescription(displayText[0])
+				.setColor("DC143C")
+				.addFields(
+					{ name: "\u200B", value: "\u200B" },
+					{ name: "Game:", value: `${displayText[1]}`, inline: true },
+					{ name: "Additional Notes:", value: `${displayText[2]}`, inline: true },
+					{ name: "\u200B", value: "\u200B" },
+					{
+						name: `<:accepted:867150417271324672>Accepted (${displayInfo1.length}/${memberCount})`,
+						value: displayInfo1.length !== 0 ? displayInfo1 : "-",
+						inline: true,
+					},
+					{
+						name: `<:unsure:867150452423131166>Unsure (${displayInfo2.length}/${memberCount})`,
+						value: displayInfo2.length !== 0 ? displayInfo2 : "-",
+						inline: true,
+					},
+					{
+						name: `<:denied:867150431612436510>Denied (${displayInfo3.length}/${memberCount})`,
+						value: displayInfo3.length !== 0 ? displayInfo3 : "-",
+						inline: true,
+					}
+				)
+				.setFooter(`This message was issued by ${msgSender}`)
+				.setTimestamp(new Date());
+
+			const upatedEventEmbed = new Discord.MessageEmbed()
+				.setTitle(`**Event** at ${displayTime}`)
+				.setThumbnail(
+					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
+				)
+				.setDescription(displayText[0])
+				.setColor("DC143C")
+				.addFields(
+					{ name: "\u200B", value: "\u200B" },
+					{ name: "Event:", value: `${displayText[1]}`, inline: true },
+					{ name: "Additional Notes:", value: `${displayText[2]}`, inline: true },
+					{ name: "\u200B", value: "\u200B" },
+					{
+						name: `<:accepted:867150417271324672>Accepted (${displayInfo1.length}/${memberCount})`,
+						value: displayInfo1.length !== 0 ? displayInfo1 : "-",
+						inline: true,
+					},
+					{
+						name: `<:unsure:867150452423131166>Unsure (${displayInfo2.length}/${memberCount})`,
+						value: displayInfo2.length !== 0 ? displayInfo2 : "-",
+						inline: true,
+					},
+					{
+						name: `<:denied:867150431612436510>Denied (${displayInfo3.length}/${memberCount})`,
+						value: displayInfo3.length !== 0 ? displayInfo3 : "-",
+						inline: true,
+					}
+				)
+				.setFooter(`This message was issued by ${msgSender}`)
+				.setTimestamp(new Date());
+
+			return option === 1 ? upatedDndEmbed : option === 2 ? upatedGameEventEmbed : upatedEventEmbed;
+		}
+
 		let config = new Array();
 		message.channel.bulkDelete(1);
 
@@ -505,108 +601,23 @@ module.exports = {
 						const {
 							message: { id },
 						} = reaction;
-						scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
+
 						const eventConfig = await eventDB.getDisplayText(embedId);
 
-						const upatedDndEmbed = new Discord.MessageEmbed()
-							.setTitle(`**D&D** at ${displayTime}`)
-							.setThumbnail("https://i.imgur.com/u0aN19t.png")
-							.setDescription(eventConfig[0])
-							.setColor("DC143C")
-							.addFields(
-								{ name: "\u200B", value: "\u200B" },
-								{ name: "Campaign:", value: `${eventConfig[1]}`, inline: true },
-								{ name: "DM:", value: `${eventConfig[2]}`, inline: true },
-								{ name: "Whereabout:", value: `${eventConfig[3]}`, inline: true }, // .schedule [2021-01-01T12:00:00] [description] [campaign] [DM] [whereabout]
-								{ name: "\u200B", value: "\u200B" },
-								{
-									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
-									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
-									inline: true,
-								},
-								{
-									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
-									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
-									inline: true,
-								},
-								{
-									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
-									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
-									inline: true,
-								}
-							)
-							.setFooter(`This message was issued by ${msgSender}`)
-							.setTimestamp(new Date());
-
-						const upatedGameEventEmbed = new Discord.MessageEmbed()
-							.setTitle(`**Game Event** at ${displayTime}`)
-							.setThumbnail(
-								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
-							)
-							.setDescription(eventConfig[0])
-							.setColor("DC143C")
-							.addFields(
-								{ name: "\u200B", value: "\u200B" },
-								{ name: "Game:", value: `${eventConfig[1]}`, inline: true },
-								{ name: "Additional Notes:", value: `${eventConfig[2]}`, inline: true },
-								{ name: "\u200B", value: "\u200B" },
-								{
-									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
-									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
-									inline: true,
-								},
-								{
-									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
-									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
-									inline: true,
-								},
-								{
-									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
-									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
-									inline: true,
-								}
-							)
-							.setFooter(`This message was issued by ${msgSender}`)
-							.setTimestamp(new Date());
-
-						const upatedEventEmbed = new Discord.MessageEmbed()
-							.setTitle(`**Event** at ${displayTime}`)
-							.setThumbnail(
-								"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
-							)
-							.setDescription(eventConfig[0])
-							.setColor("DC143C")
-							.addFields(
-								{ name: "\u200B", value: "\u200B" },
-								{ name: "Event:", value: `${eventConfig[1]}`, inline: true },
-								{ name: "Additional Notes:", value: `${eventConfig[2]}`, inline: true },
-								{ name: "\u200B", value: "\u200B" },
-								{
-									name: `<:accepted:867150417271324672>Accepted (${scheduleInfo[0].length}/${memberCount})`,
-									value: scheduleInfo[0].length !== 0 ? scheduleInfo[0] : "-",
-									inline: true,
-								},
-								{
-									name: `<:unsure:867150452423131166>Unsure (${scheduleInfo[2].length}/${memberCount})`,
-									value: scheduleInfo[2].length !== 0 ? scheduleInfo[2] : "-",
-									inline: true,
-								},
-								{
-									name: `<:denied:867150431612436510>Denied (${scheduleInfo[1].length}/${memberCount})`,
-									value: scheduleInfo[1].length !== 0 ? scheduleInfo[1] : "-",
-									inline: true,
-								}
-							)
-							.setFooter(`This message was issued by ${msgSender}`)
-							.setTimestamp(new Date());
+						scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
 
 						message.edit(
 							"@everyone",
-							embedPref === 1
-								? upatedDndEmbed
-								: embedPref === 2
-								? upatedGameEventEmbed
-								: upatedEventEmbed
+							updateEmbed(
+								embedPref,
+								scheduleInfo[0],
+								scheduleInfo[1],
+								scheduleInfo[2],
+								eventConfig[0],
+								eventConfig[1],
+								eventConfig[2],
+								eventConfig[3]
+							)
 						);
 					});
 

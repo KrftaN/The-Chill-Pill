@@ -11,15 +11,15 @@ const scheduleSchema = mongoose.Schema({
 	acceptedIds: [String],
 	displayText1: {
 		type: String,
-		required: true,
+		required: false,
 	},
 	displayText2: {
 		type: String,
-		required: true,
+		required: false,
 	},
 	displayText3: {
 		type: String,
-		required: true,
+		required: false,
 	},
 	displayText4: {
 		type: String,

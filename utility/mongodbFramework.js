@@ -291,6 +291,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$push: {
 							acceptedIds: userId,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 			}
@@ -304,6 +308,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$pull: {
 							acceptedIds: userId,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 			}
@@ -317,6 +325,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$push: {
 							[reaction]: userName,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 
@@ -334,6 +346,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$push: {
 							[reaction]: userName,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 				if (newPositionOfUserName === 0) {
@@ -351,6 +367,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$pull: {
 							[findField(userName)]: userName,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 
@@ -371,6 +391,10 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 						$pull: {
 							[reaction]: userName,
 						},
+					},
+					{
+						upsert: true,
+						new: true,
 					}
 				);
 			}
@@ -379,12 +403,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 				messageId,
 			});
 
-			accepted = result.accepted;
-			denied = result.denied;
-			tentative = result.tentative;
-			acceptedIds = result.acceptedIds;
-
-			return [accepted, denied, tentative];
+			return [result.accepted, result.tentative, result.denied];
 		} catch {
 			mongoose.connection.close();
 		}
@@ -450,8 +469,6 @@ module.exports.iniateSchedule = async (
 			displayText4 = displayText4 || 0;
 
 			if (displayText4.length > 0) {
-				console.log("option 1 (2)", displayText4);
-
 				await new scheduleSchema({
 					messageId,
 					accepted,
@@ -464,8 +481,6 @@ module.exports.iniateSchedule = async (
 					displayText4,
 				}).save();
 			} else {
-				console.log("option 2 (2)");
-
 				await new scheduleSchema({
 					messageId,
 					accepted,
