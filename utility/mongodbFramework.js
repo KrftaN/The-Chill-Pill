@@ -1,8 +1,10 @@
 const mongo = require("./mongo");
 const profileSchema = require("../schemas/profileSchema");
 const scheduleSchema = require("../schemas/scheduleSchema");
+const guildSchema = require("../schemas/guildSchema");
 const gpCache = {};
 const dailyCache = {};
+const displayTextCache = {};
 
 module.exports = (bot) => {};
 
@@ -32,7 +34,7 @@ module.exports.getGP = async (userId, userName) => {
 				}).save();
 			}
 
-			(gpCache[`${userId}`] = gp), bank;
+			(gpCache[userId] = gp), bank;
 
 			return [gp, bank];
 		} finally {
@@ -283,7 +285,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			}
 
 			async function addId(userId) {
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -300,7 +302,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			}
 
 			async function removeId(userId) {
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -317,7 +319,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			}
 
 			if (isArrEmpty() === true) {
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -338,7 +340,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			} else if (!findField(userName)) {
 				//result[reaction].push(userName);
 
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -356,7 +358,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 					addId(userId);
 				}
 			} else if (currentPositionOfUserName != newPositionOfUserName) {
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -383,7 +385,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 				if (currentPositionOfUserName === 0) {
 					removeId(userId);
 				}
-				await scheduleSchema.findOneAndUpdate(
+				result = await scheduleSchema.findOneAndUpdate(
 					{
 						messageId: messageId,
 					},
@@ -398,10 +400,6 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 					}
 				);
 			}
-
-			result = await scheduleSchema.findOne({
-				messageId,
-			});
 
 			return [result.accepted, result.tentative, result.denied];
 		} catch {
@@ -509,6 +507,11 @@ module.exports.getDisplayText = async (messageId) => {
 				messageId,
 			});
 
+			(displayTextCache[messageId] = result.displayText1),
+				result.displayText2,
+				result.displayText3,
+				result.displayText4;
+
 			return [result.displayText1, result.displayText2, result.displayText3, result.displayText4];
 		} finally {
 			mongoose.connection.close();
@@ -528,3 +531,52 @@ module.exports.deleteSchedule = async (messageId) => {
 	});
 };
 // Schedule Database code stops here
+
+module.exports.setWelcome = async (guildId, guildName, channelId, message) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			await guildSchema.findOneAndUpdate(
+				{
+					guildId,
+				},
+				{
+					guildId,
+					guildName,
+					channelId,
+					message,
+					leaveMessage: "Another One Bits The Dust!",
+				},
+				{
+					upsert: true,
+				}
+			);
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
+module.exports.setLeave = async (guildId, guildName, channelId, leaveMessage) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			await guildSchema.findOneAndUpdate(
+				{
+					guildId,
+				},
+				{
+					guildId,
+					guildName,
+					channelId,
+					message: "Hope You Enjoy Your Stay!",
+					leaveMessage,
+				},
+				{
+					upsert: true,
+				}
+			);
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+

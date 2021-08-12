@@ -546,9 +546,7 @@ module.exports = {
 										timeout: 5000,
 									})
 								);
-						}
-
-						if (emojiName === "delete" && user.id === originalSender) {
+						} else if (emojiName === "delete" && user.id === originalSender) {
 							message.channel
 								.send(
 									functions.embedify(
@@ -597,28 +595,29 @@ module.exports = {
 									timeout: 5000,
 								})
 							);
+						} else {
+							const {
+								message: { id },
+							} = reaction;
+
+							const eventConfig = await eventDB.getDisplayText(embedId);
+
+							scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
+
+							message.edit(
+								"@everyone",
+								updateEmbed(
+									embedPref,
+									scheduleInfo[0],
+									scheduleInfo[1],
+									scheduleInfo[2],
+									eventConfig[0],
+									eventConfig[1],
+									eventConfig[2],
+									eventConfig[3]
+								)
+							);
 						}
-						const {
-							message: { id },
-						} = reaction;
-
-						const eventConfig = await eventDB.getDisplayText(embedId);
-
-						scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
-
-						message.edit(
-							"@everyone",
-							updateEmbed(
-								embedPref,
-								scheduleInfo[0],
-								scheduleInfo[1],
-								scheduleInfo[2],
-								eventConfig[0],
-								eventConfig[1],
-								eventConfig[2],
-								eventConfig[3]
-							)
-						);
 					});
 
 					collector.on("end", (reason) => {

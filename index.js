@@ -1,10 +1,15 @@
-const Discord = require("discord.js");
+const Discord = ({ Client, Intents } = require("discord.js"));
+
+const intents = new Discord.Intents(32767);
+const bot = new Client({ intents });
 const { prefix, token, mongoPath } = require("./jsonFiles/config.json");
 const mongoose = require("mongoose");
 const mongo = require("./utility/mongo.js");
+const guildSchema = require("./schemas/guildSchema");
 const fs = require("fs");
 const Levels = require("discord-xp");
-const bot = new Discord.Client();
+const joinCache = {};
+const leaveCache = {};
 
 bot.login(token);
 
@@ -23,6 +28,78 @@ for (const folder of commandFolders) {
 		bot.commands.set(command.name, command);
 	}
 }
+
+bot.on("guildMemberAdd", async (member) => {
+	const { guild, user } = member;
+
+	const guildId = guild.id;
+
+	let data = joinCache[guild.id];
+
+	if (!data) {
+		await mongo().then(async (mongoose) => {
+			try {
+				const result = await guildSchema.findOne({ guildId });
+
+				joinCache[guild.id] = data = !result ? "none existant" : [result.channelId, result.message];
+			} finally {
+				mongoose.connection.close();
+			}
+		});
+	}
+
+	if (data === "none existant") return;
+
+	const embed = new Discord.MessageEmbed()
+		.setTitle(`\`${user.username}#${user.discriminator}\` just joined \`${guild.name}\``)
+		.setColor("#00FF00")
+		.setDescription(`${data[1]}`)
+		.setTimestamp(new Date());
+
+	bot.channels.cache
+		.get(data[0])
+		.send(member, embed)
+		.then((message) => {
+			message.edit("", embed);
+		});
+});
+
+bot.on("guildMemberRemove", async (member) => {
+	const { guild, user } = member;
+
+	const guildId = guild.id;
+
+	let data = leaveCache[guild.id];
+
+	if (!data) {
+		await mongo().then(async (mongoose) => {
+			try {
+				const result = await guildSchema.findOne({ guildId });
+
+				leaveCache[guild.id] = data = !result
+					? "none existant"
+					: [result.channelId, result.leaveMessage];
+			} finally {
+				mongoose.connection.close();
+			}
+		});
+	}
+
+	if (data === "none existant") return;
+
+	const embed = new Discord.MessageEmbed()
+		.setTitle(`\`${user.username}#${user.discriminator}\` just left \`${guild.name}\``)
+		.setColor("#DC143C")
+		.setDescription(`${data[1]}`)
+		.setTimestamp(new Date());
+
+	bot.channels.cache
+		.get(data[0])
+		.send(member, embed)
+		.then((message) => {
+			message.edit("", embed);
+		});
+});
 
 bot.on("ready", async () => {
 	console.log("Connect as " + bot.user.tag);
