@@ -5,6 +5,7 @@ const bot = new Client({ intents });
 const { prefix, token, mongoPath } = require("./jsonFiles/config.json");
 const mongoose = require("mongoose");
 const mongo = require("./utility/mongo.js");
+const welcome = require("./commands/configuration/welcome");
 const guildSchema = require("./schemas/guildSchema");
 const fs = require("fs");
 const Levels = require("discord-xp");
@@ -36,24 +37,35 @@ bot.on("guildMemberAdd", async (member) => {
 
 	let data = joinCache[guild.id];
 
-	if (!data) {
+	/* const validationJoinCache = welcome.validationJoinCache || data;
+
+	const validation = validationJoinCache[guild.id]; */
+
+	/* 	const validation = !welcome.validationJoinCache[guild.id]
+		? data
+		: welcome.validationJoinCache[guild.id]; */
+
+	if (data !== validation) {
 		await mongo().then(async (mongoose) => {
 			try {
 				const result = await guildSchema.findOne({ guildId });
 
-				joinCache[guild.id] = data = !result ? "none existant" : [result.channelId, result.message];
+				console.log("I got here!");
+
+				joinCache[guild.id] = data = !result ? "non existent" : [result.channelId, result.message];
 			} finally {
 				mongoose.connection.close();
 			}
 		});
 	}
 
-	if (data === "none existant") return;
+	if (data === "non existent") return;
 
 	const embed = new Discord.MessageEmbed()
 		.setTitle(`\`${user.username}#${user.discriminator}\` just joined \`${guild.name}\``)
 		.setColor("#00FF00")
 		.setDescription(`${data[1]}`)
+		.setFooter(user.avatarURL())
 		.setTimestamp(new Date());
 
 	bot.channels.cache
@@ -77,7 +89,7 @@ bot.on("guildMemberRemove", async (member) => {
 				const result = await guildSchema.findOne({ guildId });
 
 				leaveCache[guild.id] = data = !result
-					? "none existant"
+					? "non existent"
 					: [result.channelId, result.leaveMessage];
 			} finally {
 				mongoose.connection.close();
@@ -85,12 +97,13 @@ bot.on("guildMemberRemove", async (member) => {
 		});
 	}
 
-	if (data === "none existant") return;
+	if (data === "non existent") return;
 
 	const embed = new Discord.MessageEmbed()
 		.setTitle(`\`${user.username}#${user.discriminator}\` just left \`${guild.name}\``)
 		.setColor("#DC143C")
 		.setDescription(`${data[1]}`)
+		.setFooter(user.avatarURL())
 		.setTimestamp(new Date());
 
 	bot.channels.cache

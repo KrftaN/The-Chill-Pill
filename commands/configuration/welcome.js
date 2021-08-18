@@ -27,6 +27,10 @@ module.exports = {
 		args.shift();
 		welcomeMessage = args.join(" ");
 
+	/* 	module.exports.validationJoinCache = {};
+
+		validationJoinCache[guild.id] = [channelId, welcomeMessage]; */
+
 		await mongoDB.setWelcome(guild.id, guild.name, channelId, welcomeMessage);
 
 		const embed = new Discord.MessageEmbed()
@@ -45,7 +49,9 @@ module.exports = {
 					inline: true,
 				}
 			)
-			.setFooter("You can also set up a message when someones leaves. Do this with the command `.setleavemessage` or `.setleave`")
+			.setFooter(
+				"You can also set up a message when someones leaves. Do this with the command **.setleavemessage** or **.setleave**"
+			)
 			.setTimestamp(new Date());
 
 		message.channel.send(embed);

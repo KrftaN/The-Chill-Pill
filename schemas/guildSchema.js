@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const reqString = {
 	type: String,
-	required: true,
 };
 
 const guildschema = mongoose.Schema(
@@ -12,6 +11,7 @@ const guildschema = mongoose.Schema(
 		message: reqString,
 		channelId: reqString,
 		leaveMessage: reqString,
+		levelChannelId: reqString,
 	},
 	{
 		timestamps: true,

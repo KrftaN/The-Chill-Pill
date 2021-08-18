@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "discord-xp": "^1.1.16",
+    "discord.js": "^12.5.3",
+    "fs": "^0.0.1-security",
+    "luxon": "^2.0.2",
+    "mongodb": "^4.1.0",
+    "mongoose": "^5.13.7",
+    "request": "^2.88.2"
+  }
+}
