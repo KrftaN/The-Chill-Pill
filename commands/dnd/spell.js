@@ -38,11 +38,7 @@ module.exports = {
 				)
 			);
 
-		const compressedDesc = spellInfo.desc.split(" ").join("");
-
-		const amountOfLetters = compressedDesc.split("").length;
-
-		if (amountOfLetters < 1024) {
+		if (functions.getCharacterCount(spellInfo.desc) <= 1024) {
 			const embed = new Discord.MessageEmbed()
 				.setTitle(spellInfo.name)
 				.setColor("#DC143C")
@@ -50,6 +46,7 @@ module.exports = {
 				.addFields(
 					{ inline: true, name: "Level", value: spellInfo.level },
 					{ inline: true, name: "Casting Time", value: spellInfo.casting_time },
+					{ inline: true, name: "Concentration", value: spellInfo.concentration },
 					{ inline: true, name: "Range", value: spellInfo.range },
 					{ inline: true, name: "Duration", value: spellInfo.duration },
 					{ inline: true, name: "School", value: spellInfo.school },
@@ -62,7 +59,7 @@ module.exports = {
 					{ inline: true, name: "Class", value: spellInfo.class },
 					{ name: "\u200B", value: "\u200B" }
 				)
-				.setFooter("Write ´.spelllist´ or ´.spells´")
+				.setFooter("Write .spelllist or .spells")
 				.setTimestamp(new Date());
 
 			if (spellInfo?.higher_level) {
@@ -96,6 +93,7 @@ module.exports = {
 				.addFields(
 					{ inline: true, name: "Level", value: spellInfo.level },
 					{ inline: true, name: "Casting Time", value: spellInfo.casting_time },
+					{ inline: true, name: "Concentration", value: spellInfo.concentration },
 					{ inline: true, name: "Range", value: spellInfo.range },
 					{ inline: true, name: "Duration", value: spellInfo.duration },
 					{ inline: true, name: "School", value: spellInfo.school },
@@ -105,12 +103,8 @@ module.exports = {
 						name: "Material",
 						value: !spellInfo?.material ? "None" : spellInfo.material,
 					},
-					{ inline: true, name: "Class", value: spellInfo.class },
-					{ name: "\u200B", value: "\u200B" }
-				)
-
-				.setFooter("Write **.spelllist** or **.spells**")
-				.setTimestamp(new Date());
+					{ inline: true, name: "Class", value: spellInfo.class }
+				);
 
 			if (spellInfo?.higher_level) {
 				embed.addFields(
@@ -127,7 +121,7 @@ module.exports = {
 				.setTitle("Description")
 				.setColor("#DC143C")
 				.setDescription(spellInfo.desc)
-				.setFooter("Write **.spelllist** or **.spells**")
+				.setFooter("Write .spelllist or .spells")
 				.setTimestamp(new Date());
 
 			message.channel.send(embed).then(message.channel.send(embed2));

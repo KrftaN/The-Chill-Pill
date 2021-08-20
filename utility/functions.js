@@ -23,6 +23,14 @@ module.exports.findItemName = (name) => {
 	}
 };
 
+module.exports.getCharacterCount = (str) => {
+	const arrayafy = str.split(" ").join(" ");
+
+	const amountOfLetters = arrayafy.split("").length;
+
+	return amountOfLetters;
+};
+
 module.exports.commafy = (num) => {
 	//I have no idea how any of this code fucking works
 	let str = num.toString().split(".");
@@ -36,7 +44,7 @@ module.exports.commafy = (num) => {
 };
 
 module.exports.embedify = (str) => {
-	const embed = new Discord.MessageEmbed().setTitle(str).setColor("DC143C");
+	const embed = new Discord.MessageEmbed().setDescription(str).setColor("DC143C");
 
 	return embed;
 };
