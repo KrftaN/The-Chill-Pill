@@ -102,8 +102,8 @@ module.exports = {
 			.setDescription(monsterInfo?.traits)
 			.setFooter("Write .monsterlist or .monster")
 			.setTimestamp(new Date());
-      
-      const embed4 = new Discord.MessageEmbed()
+
+		const embed4 = new Discord.MessageEmbed()
 			.setTitle("Legendary Actions")
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.legendary_actions}`)
@@ -117,8 +117,8 @@ module.exports = {
 		}
 
 		message.channel.send(embed2);
-      
-      if (monsterInfo?.legendary_actions) {
+
+		if (monsterInfo?.legendary_actions) {
 			message.channel.send(embed4);
 		}
 	},

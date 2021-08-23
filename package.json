@@ -7,6 +7,7 @@
     "luxon": "^2.0.2",
     "mongodb": "^4.1.0",
     "mongoose": "^5.13.7",
+    "puppeteer": "^10.2.0",
     "request": "^2.88.2"
   }
 }
