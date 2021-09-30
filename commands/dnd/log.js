@@ -2,7 +2,8 @@ const Discord = ({ Client, Intents } = require("discord.js"));
 const intents = new Discord.Intents(32767);
 const bot = new Client({ intents });
 
-const puppeteer = require("puppeteer");
+const request = require("request");
+const cheerio = require("cheerio");
 
 module.exports = {
 	name: "log",
@@ -13,17 +14,16 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 1,
 	async execute(message, args) {
-		const browser = await puppeteer.launch({ headless: false });
-		const page = await browser.newPage();
-		await page.setViewport({ width: 1100, height: 768 });
-		await page.goto("https://www.dndbeyond.com/");
+		request(
+			"https://jsigvard.com/dnd/monster.php?m=Adult%20Black%20Dragon",
+			(error, response, html) => {
+				if (!error && response.statusCode === 200) {
+					const $ = cheerio.load(html);
+					const h2 = $(".h2");
 
-		await page.waitForSelector(".js-strip-link");
-		await page.click(".js-strip-link");
-
-		/* await page.waitForSelector("#login-link");
-		await page.click("#login-link"); */
-
-		await browser.close();
+					console.log(h2);
+				}
+			}
+		);
 	},
 };

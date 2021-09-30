@@ -37,7 +37,8 @@ module.exports = {
 				)
 			);
 
-		const embed = new Discord.MessageEmbed()
+
+		const overview = new Discord.MessageEmbed()
 			.setTitle(monsterInfo.name)
 			.setColor("#DC143C")
 			.setThumbnail(monsterInfo.img_url)
@@ -89,37 +90,50 @@ module.exports = {
 			.setFooter("Write .monsterlist or .monsters")
 			.setTimestamp(new Date());
 
-		const embed2 = new Discord.MessageEmbed()
+		const actions = new Discord.MessageEmbed()
 			.setTitle("Actions")
 			.setColor("#DC143C")
 			.setDescription(monsterInfo.actions)
 			.setFooter("Write .monsterlist or .monsters")
 			.setTimestamp(new Date());
 
-		const embed3 = new Discord.MessageEmbed()
+		const traits = new Discord.MessageEmbed()
 			.setTitle("Traits")
 			.setColor("#DC143C")
 			.setDescription(monsterInfo?.traits)
 			.setFooter("Write .monsterlist or .monster")
 			.setTimestamp(new Date());
 
-		const embed4 = new Discord.MessageEmbed()
+		const legendary_actions = new Discord.MessageEmbed()
 			.setTitle("Legendary Actions")
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.legendary_actions}`)
 			.setFooter("Write .monsterlist or .monsters")
 			.setTimestamp(new Date());
 
-		await message.channel.send(embed);
+		const reactions = new Discord.MessageEmbed()
+			.setTitle("Reactions")
+			.setColor("#DC143C")
+			.setDescription(`${monsterInfo?.reactions}`)
+			.setFooter("Write .monsterlist or .monsters")
+			.setTimestamp(new Date());
+
+		await message.channel.send(overview);
 
 		if (monsterInfo?.traits) {
-			message.channel.send(embed3);
+			message.channel.send(traits);
 		}
 
-		message.channel.send(embed2);
+		if (monsterInfo?.actions) {
+			message.channel.send(actions);
+		}
+
+		if (monsterInfo?.reactions) {
+			message.channel.send(reactions);
+		}
 
 		if (monsterInfo?.legendary_actions) {
-			message.channel.send(embed4);
+			message.channel.send(legendary_actions);
 		}
 	},
 };

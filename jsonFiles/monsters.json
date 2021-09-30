@@ -1107,7 +1107,7 @@
 		"languages": "Any two languages",
 		"challange": "2 (450 XP)",
 		"actions": "***Multiattack.*** The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers. \r \n***Scimitar.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target. *Hit:* 6 (1d6 + 3) slashing damage. \r \n***Dagger.*** *Melee or *Ranged Weapon Attack:** +5 to hit, reach 5 ft. or range 20/60 ft., one target. *Hit:* 5 (1d4 + 3) piercing damage.\r \n",
-		"Reactions": "***Parry.*** The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/181/1000/1000/636252761965117015.jpeg"
 	},
 	{
@@ -1378,7 +1378,7 @@
 		"challange": "4 (1,100 XP)",
 		"traits": "***Amorphous.*** The pudding can move through a space as narrow as 1 inch wide without squeezing. \r \n***Corrosive Form.*** A creature that touches the pudding or hits it with a melee attack while within 5 feet of it takes 4 (1d8) acid damage. Any nonmagical weapon made of metal or wood that hits the pudding corrodes. After dealing damage, the weapon takes a permanent and cumulative −1 penalty to damage rolls. If its penalty drops to −5, the weapon is destroyed.\r \nNonmagical ammunition made of metal or wood that hits the pudding is destroyed after dealing damage.\r \nThe pudding can eat through 2-inch-thick, nonmagical wood or metal in 1 round. \r \n***Spider Climb.*** The pudding can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.\r \n",
 		"actions": "***Pseudopod.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target. *Hit:* 6 (1d6 + 3) bludgeoning damage plus 18 (4d8) acid damage. In addition, nonmagical armor worn by the target is partly dissolved and takes a permanent and cumulative −1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.\r \n",
-		"Reactions": "***Split.*** When a pudding that is Medium or larger is subjected to lightning or slashing damage, it splits into two new puddings if it has at least 10 hit points. Each new pudding has hit points equal to half the original pudding's, rounded down. New puddings are one size smaller than the original pudding.\r \n",
+		"reactions": "***Split.*** When a pudding that is Medium or larger is subjected to lightning or slashing damage, it splits into two new puddings if it has at least 10 hit points. Each new pudding has hit points equal to half the original pudding's, rounded down. New puddings are one size smaller than the original pudding.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/201/315/315/636252764027417823.jpeg"
 	},
 	{
@@ -1751,7 +1751,7 @@
 		"challange": "8 (3,900 XP)",
 		"traits": "***Devil's Sight.*** Magical darkness doesn't impede the devil's darkvision. \r \n***Magic Resistance.*** The devil has advantage on saving throws against spells and other magical effects.\r \n",
 		"actions": "***Multiattack.*** The devil makes two attacks with its chains. \r \n***Chain.*** *Melee Weapon Attack:* +8 to hit, reach 10 ft., one target. *Hit:* 11 (2d6 + 4) slashing damage. The target is grappled (escape DC 14) if the devil isn't already grappling a creature. Until this grapple ends, the target is restrained and takes 7 (2d6) piercing damage at the start of each of its turns. \r \n***Animate Chains (Recharges after a Short or Long Rest).*** Up to four chains the devil can see within 60 feet of it magically sprout razor-­edged barbs and animate under the devil's control, provided that the chains aren't being worn or carried. \r \nEach animated chain is an object with AC 20, 20 hit points, resistance to piercing damage, and immunity to psychic and thunder damage. When the devil uses multiattack on its turn, it can use each animated chain to make one additional chain attack. An animated chain can grapple one creature of its own but can't make attacks while grappling. An animated chain reverts to its inanimate state if reduced to 0 hit points or if the devil is incapacitated or dies.\r \n",
-		"Reactions": "***Unnerving Mask.*** When a creature the devil can see starts its turn within 30 feet of the devil, the devil can create the illusion that it looks like one of the creature's departed loved ones or bitter enemies. If the creature can see the devil, it must succeed on a DC 14 Wisdom saving throw or be frightened until the end of its turn.\r \n",
+		"reactions": "***Unnerving Mask.*** When a creature the devil can see starts its turn within 30 feet of the devil, the devil can create the illusion that it looks like one of the creature's departed loved ones or bitter enemies. If the creature can see the devil, it must succeed on a DC 14 Wisdom saving throw or be frightened until the end of its turn.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/235/1000/1000/636252766618069332.jpeg"
 	},
 	{
@@ -2750,7 +2750,7 @@
 		"challange": "12 (8,400 XP)",
 		"traits": "***Hellish Weapons.*** The erinyes's weapon attacks are magical and deal an extra 13 (3d8) poison damage on a hit (included in the attacks). \r \n***Magic Resistance.*** The erinyes has advantage on saving throws against spells and other magical effects.\r \n",
 		"actions": "***Multiattack.*** The erinyes makes three attacks. \r \n***Longsword.*** *Melee Weapon Attack:* +8 to hit, reach 5 ft., one target. *Hit:* 8 (1d8 + 4) slashing damage, or 9 (1d10 + 4) slashing damage if used with two hands, plus 13 (3d8) poison damage. \r \n***Longbow.*** *Ranged Weapon Attack:* +7 to hit, range 150/600 ft., one target. *Hit:* 7 (1d8 + 3) piercing damage plus 13 (3d8) poison damage, and the target must succeed on a DC 14 Constitution saving throw or be poisoned. The poison lasts until it is removed by the lesser restoration spell or similar magic.\r \n",
-		"Reactions": "***Parry.*** The erinyes adds 4 to its AC against one melee attack that would hit it. To do so, the erinyes must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The erinyes adds 4 to its AC against one melee attack that would hit it. To do so, the erinyes must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/329/1000/1000/636252776041158657.jpeg"
 	},
 	{
@@ -3946,7 +3946,7 @@
 		"challange": "5 (1,800 XP)",
 		"traits": "***Brave.*** The gladiator has advantage on saving throws against being frightened. \r \n***Brute.*** A melee weapon deals one extra die of its damage when the gladiator hits with it (included in the attack).\r \n",
 		"actions": "***Multiattack.*** The gladiator makes three melee attacks or two ranged attacks. \r \n***Spear.*** *Melee or *Ranged Weapon Attack:** +7 to hit, reach 5 ft. and range 20/60 ft., one target. *Hit:* 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack. \r \n***Shield Bash.*** *Melee Weapon Attack:* +7 to hit, reach 5 ft., one creature. *Hit:* 9 (2d4 + 4) bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be knocked prone.\r \n",
-		"Reactions": "***Parry.*** The gladiator adds 3 to its AC against one melee attack that would hit it. To do so, the gladiator must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The gladiator adds 3 to its AC against one melee attack that would hit it. To do so, the gladiator must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
 	},
 	{
@@ -4886,7 +4886,7 @@
 		"challange": "3 (700 XP)",
 		"traits": "***Brave.*** The knight has advantage on saving throws against being frightened.\r \n",
 		"actions": "***Multiattack.*** The knight makes two melee attacks. \r \n***Greatsword.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target. *Hit:* 10 (2d6 + 3) slashing damage. \r \n***Heavy Crossbow.*** *Ranged Weapon Attack:* +2 to hit, range 100/400 ft., one target. *Hit:* 5 (1d10) piercing damage. \r \n***Leadership (Recharges after a Short or Long Rest).*** For 1 minute, the knight can utter a special command or warning whenever a nonhostile creature that it can see within 30 feet of it makes an attack roll or a saving throw. The creature can add a d4 to its roll provided it can hear and understand the knight. A creature can benefit from only one Leadership die at a time. This effect ends if the knight is incapacitated.\r \n",
-		"Reactions": "***Parry.*** The knight adds 2 to its AC against one melee attack that would hit it. To do so, the knight must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The knight adds 2 to its AC against one melee attack that would hit it. To do so, the knight must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/attachments/2/656/humanoid.jpg"
 	},
 	{
@@ -5264,7 +5264,7 @@
 		"challange": "16 (15,000 XP)",
 		"traits": "***Magic Resistance.*** The marilith has advantage on saving throws against spells and other magical effects. \r \n***Magic Weapons.*** The marilith's weapon attacks are magical. \r \n***Reactive.*** The marilith can take one reaction on every turn in a combat.\r \n",
 		"actions": "***Multiattack.*** The marilith makes seven attacks: six with its longswords and one with its tail. \r \n***Longsword.*** *Melee Weapon Attack:* +9 to hit, reach 5 ft., one target. *Hit:* 13 (2d8 + 4) slashing damage. \r \n***Tail.*** *Melee Weapon Attack:* +9 to hit, reach 10 ft., one creature. *Hit:* 15 (2d10 + 4) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 19). Until this grapple ends, the target is restrained, the marilith can automatically hit the target with its tail, and the marilith can't make tail attacks against other targets. \r \n***Teleport.*** The marilith magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.\r \n",
-		"Reactions": "***Parry.*** The marilith adds 5 to its AC against one melee attack that would hit it. To do so, the marilith must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The marilith adds 5 to its AC against one melee attack that would hit it. To do so, the marilith must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/189/315/315/636252763036079032.jpeg"
 	},
 	{
@@ -5643,7 +5643,7 @@
 		"languages": "Any two languages",
 		"challange": "1/8 (25 XP)",
 		"actions": "***Rapier.*** *Melee Weapon Attack:* +3 to hit, reach 5 ft., one target. *Hit:* 5 (1d8 + 1) piercing damage.\r \n",
-		"Reactions": "***Parry.*** The noble adds 2 to its AC against one melee attack that would hit it. To do so, the noble must see the attacker and be wielding a melee weapon.\r \n",
+		"reactions": "***Parry.*** The noble adds 2 to its AC against one melee attack that would hit it. To do so, the noble must see the attacker and be wielding a melee weapon.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/277/1000/1000/636252769861281900.jpeg"
 	},
 	{
@@ -5698,7 +5698,7 @@
 		"challange": "2 (450 XP)",
 		"traits": "***Amorphous.*** The jelly can move through a space as narrow as 1 inch wide without squeezing. \r \n***Spider Climb.*** The jelly can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.\r \n",
 		"actions": "***Pseudopod.*** *Melee Weapon Attack:* +4 to hit, reach 5 ft., one target. *Hit:* 9 (2d6 + 2) bludgeoning damage plus 3 (1d6) acid damage.\r \n",
-		"Reactions": "***Split.*** When a jelly that is Medium or larger is subjected to lightning or slashing damage, it splits into two new jellies if it has at least 10 hit points. Each new jelly has hit points equal to half the original jelly's, rounded down. New jellies are one size smaller than the original jelly.\r \n",
+		"reactions": "***Split.*** When a jelly that is Medium or larger is subjected to lightning or slashing damage, it splits into two new jellies if it has at least 10 hit points. Each new jelly has hit points equal to half the original jelly's, rounded down. New jellies are one size smaller than the original jelly.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/279/1000/1000/636252770058723674.jpeg"
 	},
 	{
@@ -6904,7 +6904,7 @@
 		"challange": "7 (2,900 XP)",
 		"traits": "***Bound.*** The shield guardian is magically bound to an amulet. As long as the guardian and its amulet are on the same plane of existence, the amulet's wearer can telepathically call the guardian to travel to it, and the guardian knows the distance and direction to the amulet. If the guardian is within 60 feet of the amulet's wearer, half of any damage the wearer takes (rounded up) is transferred to the guardian. \r \n***Regeneration.*** The shield guardian regains 10 hit points at the start of its turn if it has at least 1 hit point. \r \n***Spell Storing.*** A spellcaster who wears the shield guardian's amulet can cause the guardian to store one spell of 4th level or lower. To do so, the wearer must cast the spell on the guardian. The spell has no effect but is stored within the guardian. When commanded to do so by the wearer or when a situation arises that was predefined by the spellcaster, the guardian casts the stored spell with any parameters set by the original caster, requiring no components. When the spell is cast or a new spell is stored, any previously stored spell is lost.\r \n",
 		"actions": "***Multiattack.*** The guardian makes two fist attacks. \r \n***Fist.*** *Melee Weapon Attack:* +7 to hit, reach 5 ft., one target. *Hit:* 11 (2d6 + 4) bludgeoning damage.\r \n",
-		"Reactions": "***Shield.*** When a creature makes an attack against the wearer of the guardian's amulet, the guardian grants a +2 bonus to the wearer's AC if the guardian is within 5 feet of the wearer.\r \n",
+		"reactions": "***Shield.*** When a creature makes an attack against the wearer of the guardian's amulet, the guardian grants a +2 bonus to the wearer's AC if the guardian is within 5 feet of the wearer.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/145/315/315/636252758362792494.jpeg"
 	},
 	{
@@ -6930,7 +6930,7 @@
 		"languages": "--",
 		"challange": "0 (10 XP)",
 		"traits": "***False Appearance.*** While the shrieker remains motionless, it is indistinguishable from an ordinary fungus.\r \n",
-		"Reactions": "***Shriek.*** When bright light or a creature is within 30 feet of the shrieker, it emits a shriek audible within 300 feet of it. The shrieker continues to shriek until the disturbance moves out of range and for 1d4 of the shrieker's turns afterward.\r \n",
+		"reactions": "***Shriek.*** When bright light or a creature is within 30 feet of the shrieker, it emits a shriek audible within 300 feet of it. The shrieker continues to shriek until the disturbance moves out of range and for 1d4 of the shrieker's turns afterward.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/16/571/1000/1000/636376357634308010.jpeg"
 	},
 	{
@@ -7042,7 +7042,7 @@
 		"languages": "Deep Speech, Telepathy 120 ft., Undercommon",
 		"challange": "3 (700 XP)",
 		"actions": "***Bite.*** *Melee Weapon Attack:* +1 to hit, reach 5 ft., one target. *Hit:* 2 (1d6 − 1) piercing damage.\r \n***Eye Rays.*** The spectator shoots up to two of the following magical eye rays at one or two creatures it can see within 90 feet of it. It can use each ray only once on a turn.\r \n\r \n*Confusion Ray.* The target must succeed on a DC 13 Wisdom saving throw, or it can’t take reactions until the end of its next turn. On its turn, the target can’t move, and it uses its action to make a melee or ranged attack against a randomly determined creature within range. If the target can’t attack, it does nothing on its turn.\r \n*Paralyzing Ray.* The target must succeed on a DC 13 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.\r \n*Fear Ray.* The target must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. The target can repeat the saving throw at the end of each of its turns, with disadvantage if the spectator is visible to the target, ending the effect on itself on a success. \r \n*Wounding Ray.* The target must make a DC 13 Constitution saving throw, taking 16 (3d10) necrotic damage on a failed save, or half as much damage on a successful one. \r \n***Create Food and Water.*** The spectator magically creates enough food and water to sustain itself for 24 hours.\r \n",
-		"Reactions": "***Spell Reflection.*** If the spectator makes a successful saving throw against a spell, or a spell attack misses it, the spectator can choose another creature (including the spellcaster) it can see within 30 feet of it. The spell targets the chosen creature instead of the spectator. If the spell forced a saving throw, the chosen creature makes its own save. If the spell was an attack, the attack roll is rerolled against the chosen creature.\r \n",
+		"reactions": "***Spell Reflection.*** If the spectator makes a successful saving throw against a spell, or a spell attack misses it, the spectator can choose another creature (including the spellcaster) it can see within 30 feet of it. The spell targets the chosen creature instead of the spectator. If the spell forced a saving throw, the chosen creature makes its own save. If the spell was an attack, the attack roll is rerolled against the chosen creature.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/14/485/315/315/636364324602733616.png"
 	},
 	{
@@ -7254,7 +7254,7 @@
 		"challange": "7 (2,900 XP)",
 		"traits": "***Stone Camouflage.*** The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain.\r \n",
 		"actions": "***Multiattack.*** The giant makes two greatclub attacks. Greatclub. *Melee Weapon Attack:* +9 to hit, reach 15 ft., one target. *Hit:* 19 (3d8 + 6) bludgeoning damage. \r \n***Rock.*** *Ranged Weapon Attack:* +9 to hit, range 60/240 ft., one target. *Hit:* 28 (4d10 + 6) bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone.\r \n",
-		"Reactions": "***Rock Catching.*** If a rock or similar object is hurled at the giant, the giant can, with a successful DC 10 Dexterity saving throw, catch the missile and take no bludgeoning damage from it.\r \n",
+		"reactions": "***Rock Catching.*** If a rock or similar object is hurled at the giant, the giant can, with a successful DC 10 Dexterity saving throw, catch the missile and take no bludgeoning damage from it.\r \n",
 		"img_url": "https://media-waterdeep.cursecdn.com/avatars/thumbnails/0/109/315/315/636252744518731463.jpeg"
 	},
 	{
