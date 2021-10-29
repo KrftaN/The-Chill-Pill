@@ -11,6 +11,8 @@ module.exports = {
 	cooldown: 1,
 	execute(message, args, guild, bot, folders) {
 		try {
+			message.delete();
+
 			const { commands } = bot;
 
 			const folderLength = Object.keys(folders).length;
@@ -40,7 +42,7 @@ module.exports = {
 				embed.addField(Object.keys(folders)[i].toString(), fieldValues.join(" | "));
 			}
 
-			message.channel.send({ embeds: [embed] });
+			message.author.send({ embeds: [embed] });
 		} catch (err) {
 			console.log(err);
 		}

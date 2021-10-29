@@ -4,7 +4,7 @@ const bot = new Client({ intents });
 
 module.exports = {
 	name: "shuffle",
-	aliases: ["shuffle", "epicAlbinShuffleCommandThingy"],
+	aliases: ["shuffle"],
 	description: "This is something which will probably never be used again!",
 	args: true,
 	minArgs: 1,
