@@ -9,24 +9,18 @@ module.exports = {
 	aliases: ["k"],
 	guildOnly: true,
 	cooldown: 0,
-	maxArgs: 1,
-	//minArgs: 1,
+	minArgs: 2,
 	permissions: "ADMINISTRATOR",
-	usage: " <user>",
+	usage: "<user> <reason>",
 	execute(message, args) {
 		const target = message.mentions.members.first();
-		const targetUsername = target.username;
-		if (!target) {
-			message.channel.send("That user does not exist in this server!");
-		}
 
-		target
-			.kick("not cool man")
-			.then(async (target) => {
-				message.channel.send("Successfully kicked ", "**", targetUsername, "**");
-			})
-			.catch(() => {
-				message.channel.send("Couldn't kick ", "**", targetUsername, "**");
-			});
+		if (!target) return message.channel.send("Please specify a user. ❌");
+
+		if (!target.kickable) return message.channel.send("Unable to kick this user. ❌");
+
+		const reason = args.join(" ");
+
+		target.kick(reason)//.then(message.channel.send(`You successfully kicked ${target}.`));  
 	},
 };

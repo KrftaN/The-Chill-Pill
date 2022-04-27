@@ -2,7 +2,6 @@ const Discord = require("discord.js");
 const items = require("../../jsonFiles/items.json");
 const functions = require("../../utility/functions.js");
 
-
 module.exports = {
 	name: "shop",
 	aliases: [],
@@ -31,7 +30,7 @@ module.exports = {
 		if (itemName) {
 			itemName = functions.findItemName(args[0]);
 
-            const itemPath = items[itemName];
+			const itemPath = items[itemName];
 
 			const embedItemInfo = new Discord.MessageEmbed()
 				.setTitle(`${itemPath.emoji}${itemPath.name}`)
@@ -72,7 +71,7 @@ module.exports = {
 				}
 
 				embedShop.addField(
-					`​${items[decleration].emoji}${items[decleration].name} — ${functions.commafy(
+					`  ​${items[decleration].emoji}${items[decleration].name} — ${functions.commafy(
 						items[decleration].price
 					)} GP`,
 					`ID: *${items[decleration].id.join(", ")}* 
@@ -87,7 +86,7 @@ module.exports = {
 			}
 
 			embedShop.setFooter(`Your items - Page ${currentPage} - ${pages}`);
-			message.channel.send(embedShop);
+			message.channel.send({ embeds: [embedShop] });
 		}
 	},
 };

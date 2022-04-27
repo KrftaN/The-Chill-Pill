@@ -24,7 +24,7 @@ module.exports = {
 				)
 				.setAuthor(bot.user.username, bot.user.displayAvatarURL({ size: 1024, dynamic: true }))
 				.setTimestamp(new Date())
-				.setFooter("Bot made by KraftaN#8103", message.author.avatarURL({ dynamic: true }));
+				.setFooter("Bot made by KraftaN#8103", bot.user.avatarURL({ dynamic: true }));
 
 			for (let i = 0; i < folderLength; i++) {
 				let fieldValues = new Array();
@@ -42,7 +42,7 @@ module.exports = {
 				embed.addField(Object.keys(folders)[i].toString(), fieldValues.join(" | "));
 			}
 
-			message.author.send({ embeds: [embed] });
+			message.channel.send({ embeds: [embed] });
 		} catch (err) {
 			console.log(err);
 		}

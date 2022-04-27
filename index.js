@@ -9,10 +9,15 @@ const welcome = require("./commands/configuration/welcome");
 const guildSchema = require("./schemas/guildSchema");
 const fs = require("fs");
 const Levels = require("discord-xp");
+const { Player } = require("discord-player");
 const joinCache = {};
 const leaveCache = {};
 
 bot.login(token);
+
+bot.config = require("./config");
+bot.player = new Player(bot, bot.config.opt.discordPlayer);
+const player = bot.player;
 
 bot.commands = new Discord.Collection();
 bot.cooldowns = new Discord.Collection();
@@ -144,14 +149,23 @@ bot.on("ready", async () => {
 });
 
 bot.on("messageCreate", async (message) => {
+	if (message.channel.type === "DM") {
+		console.log(message.content);
+	}
+
+	if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === "DM")
+		return;
+	const arguments = message.content.trim().split(/ +/);
+
+	if (arguments.includes("balls")) {
+		message.react("❤️");
+	}
+
 	try {
 		await mongo().then(async (mongoose) => {
 			Levels.setURL(mongoPath);
 
-			if (!message.guild) return;
-			if (message.author.bot) return;
-
-			const randomAmountOfXp = Math.floor(Math.random() * 20) + 1; // Min 1, Max 30
+			const randomAmountOfXp = Math.floor(Math.random() * 20) + 1; // Min 1, Max 20
 			const hasLeveledUp = await Levels.appendXp(
 				message.author.id,
 				message.guild.id,
@@ -165,8 +179,6 @@ bot.on("messageCreate", async (message) => {
 			}
 		});
 
-		if (!message.content.startsWith(prefix) || message.author.bot) return;
-
 		const args = message.content.slice(prefix.length).trim().split(/ +/);
 		const commandName = args.shift().toLowerCase();
 
@@ -176,7 +188,7 @@ bot.on("messageCreate", async (message) => {
 
 		if (!command) return;
 
-		if (command.guildOnly && message.channel.type === "dm")
+		if (command.guildOnly && message.channel.type === "DM")
 			return message.reply("I can't execute that command inside DMs!");
 
 		if (command.permissions) {
@@ -186,6 +198,20 @@ bot.on("messageCreate", async (message) => {
 					return message.reply("YOU DO NOT HAVE PERMISSION (git gud scrub)");
 				}
 			}
+		}
+
+		if (command.voiceChannel === true) {
+			if (!message.member.voice.channel)
+				return message.channel.send(
+					`${message.author}, You are not connected to an audio channel. ❌`
+				);
+			if (
+				message.guild.me.voice.channel &&
+				message.member.voice.channel.id !== message.guild.me.voice.channel.id
+			)
+				return message.channel.send(
+					`${message.author}, You are not on the same audio channel as me. ❌`
+				);
 		}
 
 		if (command.creator === true && message.author.id !== "344834268742156298")
@@ -247,4 +273,35 @@ bot.on("messageCreate", async (message) => {
 	} catch (err) {
 		console.log(err);
 	}
+});
+
+player.on("error", (queue, error) => {
+	console.log(`There was a problem with the song queue => ${error.message}`);
+});
+
+player.on("connectionError", (queue, error) => {
+	console.log(`I'm having trouble connecting => ${error.message}`);
+});
+
+player.on("trackStart", (queue, track) => {
+	if (!bot.config.opt.loopMessage && queue.repeatMode !== 0) return;
+	queue.metadata.send(
+		`🎵 Music started playing: **${track.title}** -> Channel: **${queue.connection.channel.name}** 🎧`
+	);
+});
+
+player.on("trackAdd", (queue, track) => {
+	queue.metadata.send(`**${track.title}** added to playlist. ✅`);
+});
+
+player.on("botDisconnect", (queue) => {
+	queue.metadata.send("I got kicked, the whole playlist has been cleared! ❌");
+});
+
+player.on("channelEmpty", (queue) => {
+	queue.metadata.send("I left due to inactivity ❌");
+});
+
+player.on("queueEnd", (queue) => {
+	queue.metadata.send("Queue is finished. ✅");
 });

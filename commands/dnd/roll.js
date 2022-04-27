@@ -21,17 +21,6 @@ module.exports = {
 
 		const dice = Number(args[0].slice(args[0].indexOf("d") + 1));
 
-		let result = [...Array(amount)]
-			.map(() => Math.floor(Math.random() * dice) + 1)
-			.sort((a, b) => b - a);
-
-		let sum =
-			args.length > 2 && args[1] === "+"
-				? result.reduce(add, 0) + Number(args[2])
-				: args.length > 2 && args[1] === "-"
-				? result.reduce(add, 0) - Number(args[2])
-				: result.reduce(add, 0);
-
 		const embed1 = new Discord.MessageEmbed()
 			.setTitle("❌ Invalid input! ❌")
 			.setColor("#FFFF00")
@@ -65,10 +54,19 @@ module.exports = {
 				embeds: [embed3],
 			});
 
+		let result = [...Array(amount)].map(() => Math.floor(Math.random() * dice) + 1);
+
+		let sum =
+			args.length > 2 && args[1] === "+"
+				? result.reduce(add, 0) + Number(args[2])
+				: args.length > 2 && args[1] === "-"
+				? result.reduce(add, 0) - Number(args[2])
+				: result.reduce(add, 0);
+
 		const embed4 = new Discord.MessageEmbed()
 			.setTitle("🎲Rolling Dice🎲")
 			.setColor("#DC143C")
-			.setDescription(`[**${args[0]}** : ${result.join(", ")}] \n **The Sum: \`${sum}\`**`)
+			.setDescription(`[**${args[0]}** : ${result.join(" | ")}] \n **The Sum: \`${sum}\`**`)
 			.setTimestamp(new Date());
 
 		message.channel.send({ embeds: [embed4] });

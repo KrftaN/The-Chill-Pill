@@ -18,8 +18,7 @@ module.exports.getGP = async (userId, userName) => {
 
 			let gp = 500;
 			let bank = 0;
-			let size = Math.floor(Math.random() * 25) + 1;
-			let haram = Math.floor(Math.random() * 100) + 1;
+
 			if (result) {
 				gp = result.gp;
 				bank = result.bank;
@@ -29,8 +28,6 @@ module.exports.getGP = async (userId, userName) => {
 					userName,
 					gp,
 					bank,
-					size,
-					haram,
 				}).save();
 			}
 
@@ -43,9 +40,25 @@ module.exports.getGP = async (userId, userName) => {
 	});
 };
 
-module.exports.addBal = async (userId, number) => {
+module.exports.addBal = async (userId, number, userName) => {
 	return await mongo().then(async (mongoose) => {
 		try {
+			let gp = 500;
+			let bank = 0;
+
+			const check = await profileSchema.findOne({
+				userId,
+			});
+
+			if (!check) {
+				await new profileSchema({
+					userId,
+					userName,
+					gp,
+					bank,
+				}).save();
+			}
+
 			const result = await profileSchema.findOneAndUpdate(
 				{
 					userId,
@@ -195,7 +208,7 @@ module.exports.give = async (senderId, receiverID, number) => {
 	});
 };
 
-module.exports.checkUserDate = async (userId, date) => {
+module.exports.checkUserDate = async (userId, date, userName) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			const result = await profileSchema.findOne({
@@ -204,7 +217,7 @@ module.exports.checkUserDate = async (userId, date) => {
 
 			let gp = 500;
 			let bank = 0;
-			let size = Math.floor(Math.random() * 25) + 1;
+
 			if (result) {
 				gp = result.gp;
 				bank = result.bank;
@@ -214,11 +227,12 @@ module.exports.checkUserDate = async (userId, date) => {
 					userName,
 					gp,
 					bank,
-					size,
 				}).save();
+
+				result.daily = "1944-06-06";
 			}
 
-			userDate = result.daily;
+			userDate = result.daily | undefined;
 
 			if (userDate === date) {
 				return false;

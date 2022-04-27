@@ -27,12 +27,12 @@ module.exports = {
 
 			const embedBal = new Discord.MessageEmbed()
 				.setColor("#DC143C")
-				.setDescription(`You successfully deposited ${args[0]}. Total balance:`)
+				.setDescription(`You successfully deposited ${args[0]}.`)
 				.setTitle(`${message.author.username}'s Balance`)
 				.addField("Wallet", `***${balance[0]}*** GP`)
 				.addField("Bank", `***${balance[1]}*** GP`);
 
-			message.channel.send({ embeds: [embedBal] });
+			message.reply({ embeds: [embedBal] });
 		} catch (err) {
 			console.log(err);
 		}

@@ -10,6 +10,8 @@ module.exports = {
 	cooldown: 0,
 	args: false,
 	execute(message, args, guild, client) {
-		console.log(client);
+		console.log(message);
+
+		
 	},
 };

@@ -25,6 +25,6 @@ module.exports = {
 			.addField("Bank", `> ***${balance[1]}*** GP`)
 			.setTimestamp(new Date());
 
-		message.reply(embedBal);
+		message.reply({ embeds: [embedBal] });
 	},
 };

@@ -27,11 +27,12 @@ module.exports = {
 
 			const embedBal = new Discord.MessageEmbed()
 				.setColor("#DC143C")
+				.setDescription(`You successfully withdrawn ${args[0]}.`)
 				.setTitle(`${message.author.username}'s Balance`)
 				.addField("Wallet", `***${balance[0]}*** GP`)
 				.addField("Bank", `***${balance[1]}*** GP`);
 
-			message.channel.send(`You successfully withdrawn ${args[0]}. Total balance:`, embedBal);
+			message.reply({ embeds: [embedBal] });
 		} catch (err) {
 			console.log(err);
 		}

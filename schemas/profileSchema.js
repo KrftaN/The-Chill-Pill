@@ -17,14 +17,6 @@ const profileSchema = mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		size: {
-			type: Number,
-			required: true,
-		},
-		haram: {
-			type: Number,
-			required: true,
-		},
 		daily: {
 			type: String,
 			required: false,

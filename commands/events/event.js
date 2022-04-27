@@ -24,7 +24,7 @@ module.exports = {
 	<in 45 minutes> 
 	<today[or td] 15:45> 
 	<tomorrow[or tm] 15:45>`,
-	execute(message, args, guild) {
+	execute(message, args, guild, bot, folders) {
 		let scheduleInfo;
 		let embedId;
 		let embedOption;

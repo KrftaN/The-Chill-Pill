@@ -8,7 +8,7 @@ module.exports = {
 	minArgs: 1,
 	cooldown: 3,
 	usage: "<the message you want the bot to send>",
-	execute(message, args, guild) {
+	execute(message, args, guild, bot, folders) {
 		message.delete();
 
 		message.channel.send(message.content.split(`${prefix}say`).pop());

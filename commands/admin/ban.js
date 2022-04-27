@@ -1,3 +1,8 @@
+const Discord = ({ Client, Intents } = require("discord.js"));
+
+const intents = new Discord.Intents(32767);
+const bot = new Client({ intents });
+
 module.exports = {
 	name: "ban",
 	aliases: ["b"],
@@ -8,24 +13,20 @@ module.exports = {
 	cooldown: 0,
 	minArgs: 2,
 	usage: " <user> <reason for ban>",
-	execute(message, args, text) {
+	async execute(message, args, guild, bot, folders) {
+		
+
+		/* 	const Guild = bot.guilds.cache.get(guild.id);
+
 		const mentionedUser = message.mentions.users.first();
-		const member = message.guild.member(mentionedUser);
-		if (
-			message.author.id !== "344834268742156298" &&
-			!message.member.hasPermission(
-				"ADMINISTRATOR",
-				(explicit = true) && message.author.id !== "344834268742156298"
-			)
-		)
-			return message.channel.send("YOU DO NOT HAVE PERMISSION (git gud scrub)");
+
+		const Member = Guild.members.cache.get(message.author.id);
 
 		if (mentionedUser) {
-			if (member) {
-				member
-					.ban({
-						reason: text,
-					})
+			if (Member) {
+				Member.ban({
+					reason: args.join(" "),
+				})
 					.then(() => {
 						message.reply(`Sucessfully banned ${mentionedUser.tag}`);
 					})
@@ -34,6 +35,6 @@ module.exports = {
 						console.log(err);
 					});
 			}
-		}
+		} */
 	},
 };

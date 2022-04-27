@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const economy = require("../../utility/mongodbFramework");
 
 module.exports = {
@@ -15,10 +14,12 @@ module.exports = {
 		const userDate = await economy.checkUserDate(message.author.id, day, message.author.username);
 
 		if (userDate === false)
-			return message.reply("You must wait until next day until you can claim your reward again.");
+			return message.reply(
+				"You must wait until next day until you can claim your reward again. ❌"
+			);
 
 		message.channel.send(
-			`Your daily reward of **3000** GP has been added to your balance. [Total balance: ${userDate[1]}]`
+			`Your daily reward of **3000** GP has been added to your balance. \`Total balance: ${userDate[1]}\`✔️`
 		);
 	},
 };

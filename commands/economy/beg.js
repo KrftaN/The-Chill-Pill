@@ -9,16 +9,12 @@ module.exports = {
 	maxArgs: 0,
 	cooldown: 30,
 	execute(message, args, guild) {
-		economy.getGP(message.author.id);
+		const randomNumber = Math.floor(Math.random() * 250);
 
-		let outcome = Math.floor(Math.random() * 100) + 1;
+		if (Math.floor(Math.random() * 100) + 1 >= 25) {
+			economy.addBal(message.author.id, randomNumber, message.author.username);
 
-		let randomnumber = Math.floor(Math.random() * 250);
-
-		if (outcome >= 25) {
-			economy.addBal(message.author.id, randomnumber);
-
-			message.channel.send(`You begged and someone gave you ${randomnumber}GP`);
+			message.channel.send(`You begged and someone gave you ${randomNumber}GP`);
 		} else {
 			message.channel.send("You begged for many long hours but no one spared a single CP to you.");
 		}

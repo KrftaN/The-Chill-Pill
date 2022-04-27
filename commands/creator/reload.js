@@ -3,7 +3,7 @@ const fs = require("fs");
 module.exports = {
 	name: "reload",
 	description: "Only creator man shall use this command",
-	args: true,
+	args: false,
 	guildOnly: false,
 	creator: true,
 	aliases: ["roll", "r"],
