@@ -17,6 +17,10 @@ const profileSchema = mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		wikiPoints: {
+			type: Number,
+			required: true,
+		},
 		daily: {
 			type: String,
 			required: false,

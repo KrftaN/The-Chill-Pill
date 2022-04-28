@@ -2,11 +2,9 @@ const mongo = require("./mongo");
 const profileSchema = require("../schemas/profileSchema");
 const scheduleSchema = require("../schemas/scheduleSchema");
 const guildSchema = require("../schemas/guildSchema");
-const gpCache = {};
-const dailyCache = {};
-const displayTextCache = {};
-
-module.exports = (bot) => {};
+const gpCache = new Object();
+const wikiCache = new Object();
+const displayTextCache = new Object();
 
 // Economy Database code starts here
 module.exports.getGP = async (userId, userName) => {
@@ -18,6 +16,7 @@ module.exports.getGP = async (userId, userName) => {
 
 			let gp = 500;
 			let bank = 0;
+			let wikiPoints = 20;
 
 			if (result) {
 				gp = result.gp;
@@ -28,6 +27,7 @@ module.exports.getGP = async (userId, userName) => {
 					userName,
 					gp,
 					bank,
+					wikiPoints,
 				}).save();
 			}
 
@@ -40,11 +40,43 @@ module.exports.getGP = async (userId, userName) => {
 	});
 };
 
+module.exports.getWiki = async (userId, userName) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			const result = await profileSchema.findOne({
+				userId,
+			});
+			let gp = 500;
+			let bank = 0;
+			let wikiPoints = 20;
+
+			if (result) {
+				wikiPoints = result.wikiPoints;
+			} else {
+				await new profileSchema({
+					userId,
+					userName,
+					gp,
+					bank,
+					wikiPoints,
+				}).save();
+			}
+
+			wikiCache[userId] = wikiPoints;
+
+			return wikiPoints;
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
 module.exports.addBal = async (userId, number, userName) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			let gp = 500;
 			let bank = 0;
+			let wikiPoints = 20;
 
 			const check = await profileSchema.findOne({
 				userId,
@@ -56,6 +88,7 @@ module.exports.addBal = async (userId, number, userName) => {
 					userName,
 					gp,
 					bank,
+					wikiPoints,
 				}).save();
 			}
 
@@ -168,10 +201,30 @@ module.exports.deposit = async (userId, number) => {
 	});
 };
 
-module.exports.give = async (senderId, receiverID, number) => {
+module.exports.give = async (senderId, receiverID, number, senderUsername, receiverUsername) => {
 	return await mongo().then(async (mongoose) => {
 		try {
-			const bal1 = await profileSchema.findOneAndUpdate(
+			let gp = 500;
+			let bank = 0;
+			let wikiPoints = 20;
+
+			const check = await profileSchema.findOne({
+				userId: receiverID,
+			});
+
+			console.log(check);
+
+			if (!check) {
+				await new profileSchema({
+					userId: receiverID,
+					userName: receiverUsername,
+					gp,
+					bank,
+					wikiPoints,
+				}).save();
+			}
+
+			await profileSchema.findOneAndUpdate(
 				{
 					userId: senderId,
 				},
@@ -520,7 +573,7 @@ module.exports.iniateSchedule = async (
 				}).save();
 			}
 
-			const result = await scheduleSchema.findOne({
+			await scheduleSchema.findOne({
 				messageId,
 			});
 		} finally {

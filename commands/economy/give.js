@@ -17,12 +17,18 @@ module.exports = {
 		try {
 			const matches2 = args[1].match(/^[0-9]+$/);
 
-			if (args[2] <= 0 || !matches2)
+			if (args[1] <= 0 || !matches2)
 				return message.channel.send("You must send a valid **number**.");
 
-			if (args[2] > validate[0]) return message.channel.send("haha cant do that ur too poor");
+			if (args[1] > validate[0]) return message.channel.send("haha cant do that ur too poor");
 
-			const usersBal = await economy.give(message.author.id, mentionedUser.id, args[1]);
+			const usersBal = await economy.give(
+				message.author.id,
+				mentionedUser.id,
+				args[1],
+				message.author.username,
+				mentionedUser.username
+			);
 
 			message.channel.send(
 				`You have successfully given **${args[1]}** GP to **${mentionedUser.username}'s** balance. [Total Balance: ${usersBal}]`
