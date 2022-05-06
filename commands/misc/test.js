@@ -10,8 +10,14 @@ module.exports = {
 	cooldown: 0,
 	args: false,
 	execute(message, args, guild, client) {
-		console.log(message);
+		function removeCharacter(a, b) {
+			return a.replace(`/${b}/m`, "");
+		}
 
-		
+		console.log(removeCharacter("hello my name is malte", "m"));
+
+		let dummyString = ":one:";
+		dummyString = dummyString.replace(/:/g, "");
+		console.log(dummyString);
 	},
 };

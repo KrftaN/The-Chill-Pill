@@ -31,6 +31,10 @@ module.exports.getCharacterCount = (str) => {
 	return amountOfLetters;
 };
 
+module.exports.onlyNumbers = (str) => {
+	return /^[0-9]+$/.test(str);
+};
+
 module.exports.commafy = (num) => {
 	//I have no idea how any of this code fucking works
 	let str = num.toString().split(".");

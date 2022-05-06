@@ -201,18 +201,58 @@ module.exports.deposit = async (userId, number) => {
 	});
 };
 
+module.exports.wikiRacePointDistrubtion = async (winnerId, price, buyIn, losersId) => {
+	return await mongo().then(async (mongoose) => {
+		try {
+			await profileSchema.findOneAndUpdate(
+				{
+					userId: winnerId,
+				},
+				{
+					$inc: {
+						wikiPoints: price - buyIn,
+					},
+				},
+				{
+					upsert: true,
+					new: true,
+				}
+			);
+
+			await Promise.all(
+				losersId.map(async (userId) => {
+					await profileSchema.findOneAndUpdate(
+						{
+							userId,
+						},
+						{
+							$inc: {
+								wikiPoints: -buyIn,
+							},
+						},
+						{
+							upsert: true,
+							new: true,
+						}
+					);
+				})
+			);
+		} finally {
+			mongoose.connection.close();
+		}
+	});
+};
+
 module.exports.give = async (senderId, receiverID, number, senderUsername, receiverUsername) => {
 	return await mongo().then(async (mongoose) => {
 		try {
 			let gp = 500;
 			let bank = 0;
-			let wikiPoints = 20;
+			let wikiPoints = 25;
 
 			const check = await profileSchema.findOne({
 				userId: receiverID,
 			});
-
-			console.log(check);
 
 			if (!check) {
 				await new profileSchema({
