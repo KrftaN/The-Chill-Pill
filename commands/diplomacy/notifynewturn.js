@@ -23,36 +23,34 @@ module.exports = {
 					lastDate = lastDate ?? currentDateCheck;
 
 					if (currentDateCheck === lastDate) return;
-
-					console.log("I passed the check!");
-
 					lastDate = currentDateCheck;
+
+					await axios(url).then((response) => {
+						const html = response.data;
+						const $ = cheerio.load(html);
+		
+						const currentDate = $(".gameDate", html).text();
+						const currentMap = `https://webdiplomacy.net/${$("#LargeMapLink.mapnav", html).attr(
+							"href"
+						)}`;
+		
+						const embed = new Discord.MessageEmbed()
+							.setTitle(`${currentDate.toString()} | New Round Lads!`)
+							.setImage(currentMap.toString())
+							.setDescription("A new round has started, make sure to finish your moves!")
+							.setURL(url.toString())
+							.setColor("#FF0000")
+							.setTimestamp(new Date());
+		
+						message.channel.send({ embeds: [embed] });
+		
+						message.channel.send("@everyone").then((message) => {
+							message.delete();
+						});
+					});
 				});
-			}, 1000);
+			}, 120000);
 
-			await axios(url).then((response) => {
-				const html = response.data;
-				const $ = cheerio.load(html);
-
-				const currentDate = $(".gameDate", html).text();
-				const currentMap = `https://webdiplomacy.net/${$("#LargeMapLink.mapnav", html).attr(
-					"href"
-				)}`;
-
-				const embed = new Discord.MessageEmbed()
-					.setTitle(`${currentDate.toString()} | New Round Lads!`)
-					.setImage(currentMap.toString())
-					.setDescription("A new round has started, make sure to finish your moves!")
-					.setURL(url.toString())
-					.setColor("#FF0000")
-					.setTimestamp(new Date());
-
-				message.channel.send({ embeds: [embed] });
-
-				message.channel.send("@everyone").then((message) => {
-					message.delete();
-				});
-			});
 
 		} catch (err) {
 			console.log(err);
