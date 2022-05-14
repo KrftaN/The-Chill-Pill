@@ -69,10 +69,6 @@ module.exports = {
 
 			const buyIn = args[0];
 
-			function removeCharacter(a) {
-				return a.replace(/:/g, "");
-			}
-
 			const embed = new Discord.MessageEmbed() // This checks your own balance
 				.setColor("#DC143C")
 				.setTitle("🏎️ Wikipedia Race! 🏎️ | Waiting For Players...")

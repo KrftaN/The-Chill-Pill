@@ -14,7 +14,6 @@ module.exports = {
 
 		const { commands } = bot;
 
-		const folderLength = Object.keys(folders).length;
 
 		const embed = new Discord.MessageEmbed()
 			.setColor("#DC143C")
@@ -25,7 +24,7 @@ module.exports = {
 			.setTimestamp(new Date())
 			.setFooter("Bot made by KraftaN#8103", bot.user.avatarURL({ dynamic: true }));
 
-		for (let i = 0; i < folderLength; i++) {
+		for (let i = 0; i <  Object.keys(folders).length; i++) {
 			let fieldValues = new Array();
 
 			Object.values(folders)[i].forEach((commandName) => {

@@ -6,7 +6,7 @@ module.exports = {
 	args: false,
 	guildOnly: false,
 	creator: true,
-	aliases: ["roll", "r"],
+	aliases: ["r"],
 	usage: "<the command>",
 	cooldown: 0,
 	execute(message, args) {

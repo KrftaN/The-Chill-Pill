@@ -1,30 +1,26 @@
 const Discord = ({ Client, Intents } = require("discord.js"));
-
 const intents = new Discord.Intents(32767);
 const bot = new Client({ intents });
 const { prefix, token, mongoPath } = require("./jsonFiles/config.json");
 const mongoose = require("mongoose");
 const mongo = require("./utility/mongo.js");
-const welcome = require("./commands/configuration/welcome");
-const guildSchema = require("./schemas/guildSchema");
 const fs = require("fs");
 const Levels = require("discord-xp");
 const { Player } = require("discord-player");
-const joinCache = {};
-const leaveCache = {};
 
+let objectOfcommandAndFolders = new Object();
 bot.login(token);
 
-bot.config = require("./config");
+bot.config = require("./utility/config");
 bot.player = new Player(bot, bot.config.opt.discordPlayer);
 const player = bot.player;
 
 bot.commands = new Discord.Collection();
+bot.slashCommands = new Discord.Collection();
 bot.cooldowns = new Discord.Collection();
 
 const commandFolders = fs.readdirSync("./commands");
-
-let objectOfcommandAndFolders = new Object();
+const slashCommandFolders = fs.readdirSync("./slashCommands");
 
 console.log("Loading commands...");
 for (const folder of commandFolders) {
@@ -45,90 +41,19 @@ for (const folder of commandFolders) {
 		objectOfcommandAndFolders[folder].push(command.name);
 	}
 }
+console.log("Loading slash commands...");
+for (const folder of slashCommandFolders) {
+	//Finds the name of the command
+	const slashCommandFiles = fs
+		.readdirSync(`./slashCommands/${folder}`)
+		.filter((file) => file.endsWith(".js"));
+	for (const file of slashCommandFiles) {
+		const command = require(`./slashCommands/${folder}/${file}`);
+		bot.slashCommands.set(command.data.name, command);
 
-/* bot.on("guildMemberAdd", async (member) => {
-	const { guild, user } = member;
-
-	const guildId = guild.id;
-
-	let data = joinCache[guild.id];
-
-	const validationJoinCache = welcome.validationJoinCache || data;
-
-	const validation = validationJoinCache[guild.id]; 
-
-		const validation = !welcome.validationJoinCache[guild.id]
-		? data
-		: welcome.validationJoinCache[guild.id];
-
-	if (data !== validation) {
-		await mongo().then(async (mongoose) => {
-			try {
-				const result = await guildSchema.findOne({ guildId });
-
-				console.log("I got here!");
-
-				joinCache[guild.id] = data = !result ? "non existent" : [result.channelId, result.message];
-			} finally {
-				mongoose.connection.close();
-			}
-		});
+		console.log(`-> Loaded command ${command.data.name}`);
 	}
-
-	if (data === "non existent") return;
-
-	const embed = new Discord.MessageEmbed()
-		.setTitle(`\`${user.username}#${user.discriminator}\` just joined \`${guild.name}\``)
-		.setColor("#00FF00")
-		.setDescription(`${data[1]}`)
-		.setFooter(user.avatarURL())
-		.setTimestamp(new Date());
-
-	bot.channels.cache
-		.get(data[0])
-		.send({ content: member, embeds: [embed] })
-		.then((message) => {
-			message.edit({ embeds: [embed] });
-		});
-}); */
-
-bot.on("guildMemberRemove", async (member) => {
-	const { guild, user } = member;
-
-	const guildId = guild.id;
-
-	let data = leaveCache[guild.id];
-
-	if (!data) {
-		await mongo().then(async (mongoose) => {
-			try {
-				const result = await guildSchema.findOne({ guildId });
-
-				leaveCache[guild.id] = data = !result
-					? "non existent"
-					: [result.channelId, result.leaveMessage];
-			} finally {
-				mongoose.connection.close();
-			}
-		});
-	}
-
-	if (data === "non existent") return;
-
-	const embed = new Discord.MessageEmbed()
-		.setTitle(`\`${user.tag}\` just left \`${guild.name}\``)
-		.setColor("#DC143C")
-		.setDescription(`${data[1]}`)
-		.setFooter(user.avatarURL())
-		.setTimestamp(new Date());
-
-	bot.channels.cache
-		.get(data[0])
-		.send({ content: member, embeds: [embed] })
-		.then((message) => {
-			message.edit({ embeds: [embed] });
-		});
-});
+}
 
 bot.on("ready", async () => {
 	console.log(
@@ -148,18 +73,34 @@ bot.on("ready", async () => {
 	});
 });
 
-bot.on("messageCreate", async (message) => {
-	if (message.channel.type === "DM") {
-		console.log(message.content);
-	}
+bot.on("interactionCreate", async (interaction) => {
+	if (!interaction.isCommand()) return;
+	const { commandName, options } = interaction;
 
-	if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === "DM")
-		return;
-	const arguments = message.content.trim().split(/ +/);
+	const slashCommand = bot.slashCommands.get(commandName);
+
+	if (!slashCommand) return;
+
+	try {
+		await slashCommand.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({
+			content: "There was an error while executing this command!",
+			ephemeral: true,
+		});
+	}
+});
+
+bot.on("messageCreate", async (message) => {
+	const arguments = message.content.toLowerCase().trim().split(/ +/);
 
 	if (arguments.includes("balls")) {
 		message.react("❤️");
 	}
+
+	if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type === "DM")
+		return;
 
 	try {
 		await mongo().then(async (mongoose) => {
