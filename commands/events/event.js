@@ -1,4 +1,4 @@
-const { DateTime } = require("luxon");
+const { DateTime, Settings } = require("luxon");
 const Discord = require("discord.js");
 const intents = new Discord.Intents(32767);
 const bot = new Client({ intents });
@@ -28,7 +28,7 @@ module.exports = {
 		let scheduleInfo;
 		let embedId;
 		let embedOption;
-
+		Settings.defaultZone = "Europe/Stockholm";
 		let dateThen;
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
 

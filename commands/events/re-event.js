@@ -1,4 +1,4 @@
-const { DateTime } = require("luxon");
+const { DateTime, Settings } = require("luxon");
 const Discord = require("discord.js");
 const intents = new Discord.Intents(32767);
 const bot = new Client({ intents });
@@ -25,6 +25,7 @@ module.exports = {
 	<today[or td] 15:45> 
 	<tomorrow[or tm] 15:45>`,
 	async execute(message, args) {
+		Settings.defaultZone = "Europe/Stockholm";
 		const essentialInfo = await eventDB.getEssentialInfo(args[0]); //	timeIniated, timeFinish, originalSender, originalSenderUsername, embedOption,
 
 		let scheduleInfo;

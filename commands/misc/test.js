@@ -10,6 +10,9 @@ module.exports = {
 	creator: true,
 	args: false,
 	execute(message, args, guild, client) {
-		console.log(message.content);
+		console.log(
+			message,
+			bot.emojis.cache.find((emoji) => emoji.name === "flushed")
+		);
 	},
 };
