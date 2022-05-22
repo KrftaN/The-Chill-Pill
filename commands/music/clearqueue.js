@@ -10,10 +10,9 @@ module.exports = {
 	aliases: ["cq"],
 	description: "Clear the queue",
 	args: false,
-	maxArgs: 1,
 	cooldown: 1,
 
-	async execute(message, args, guild, bot, folders) {
+	async execute(message, args, bot) {
 		const queue = bot.player.getQueue(message.guild.id);
 
 		if (!queue || !queue.playing)

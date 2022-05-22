@@ -1,14 +1,14 @@
 module.exports = {
 	name: "progress",
 	aliases: ["time"],
-	utilisation: "{prefix}progress",
+	utilisation: "progress",
 	voiceChannel: true,
 
-	async execute(message, args, guild, bot, folders) {
-		const queue = bot.player.getQueue(message.guild.id);
+	async execute(message, args, bot) {
+		const queue = bot.player.getQueue(interaction.guild.id);
 
 		if (!queue || !queue.playing)
-			return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
+			return message.channel.send(`${message.author}, There is no music currently playing! ❌`);
 
 		const progress = queue.createProgressBar();
 		const timestamp = queue.getPlayerTimestamp();

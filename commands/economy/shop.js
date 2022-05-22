@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	minArgs: 0,
 	cooldown: 1,
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		let allItemsObj = new Object();
 		let allItemsArr = new Array();
 

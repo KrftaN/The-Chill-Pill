@@ -14,7 +14,7 @@ module.exports = {
 	minArgs: 1,
 	usage: "<spell name>",
 	cooldown: 1,
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		function ciEquals(a, b) {
 			return typeof a === "string" && typeof b === "string"
 				? a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0

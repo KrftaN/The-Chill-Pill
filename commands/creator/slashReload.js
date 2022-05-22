@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 module.exports = {
-	name: "slashReload",
+	name: "slashreload",
 	description: "Only creator man shall use this command",
 	args: false,
 	guildOnly: false,
@@ -25,10 +25,10 @@ module.exports = {
 			fs.readdirSync(`./slashCommands/${folder}`).includes(`${command.name}.js`)
 		);
 
-		delete require.cache[require.resolve(`../${folderName}/${command.name}.js`)];
+		delete require.cache[require.resolve(`../../slashCommands/${folderName}/${command.name}.js`)];
 
 		try {
-			const newCommand = require(`../${folderName}/${command.name}.js`);
+			const newCommand = require(`../../slashCommands/${folderName}/${command.name}.js`);
 			message.client.slashCommands.set(newCommand.name, newCommand);
 			message.channel.send(`Command \`${newCommand.name}\` was reloaded!`);
 			console.log(`Command ${newCommand.name} was reloaded!`);

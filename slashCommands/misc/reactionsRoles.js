@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
-	name: "reactionRoles",
+	name: "reactionroles",
 	data: new SlashCommandBuilder()
 		.setName("reactionroles")
-		.setDescription("Let's people add roles via reacting to a targeted message.")
+		.setDescription("Lets people add roles via reacting to a targeted message.")
 		.addNumberOption((option) => {
 			return (option = option
 				.setName("messageid")
@@ -20,7 +20,8 @@ module.exports = {
 	async execute(interaction) {
 		const { options } = interaction;
 
-		const messageId = options.getRole("role");
+		const role = options.getRole("role");
+		const messageId = options.getString("messageid");
 
 		client.channels.cache.get();
 	},

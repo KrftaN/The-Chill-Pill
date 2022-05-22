@@ -1,9 +1,6 @@
 const mongoDB = require("../../utility/mongodbFramework");
 const Discord = ({ Client, Intents } = require("discord.js"));
 
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-
 module.exports = {
 	name: "setlevelchannel",
 	aliases: ["setlevel"],

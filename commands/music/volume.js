@@ -3,10 +3,10 @@ const maxVol = require("../../utility/config").opt.maxVol;
 module.exports = {
 	name: "volume",
 	aliases: ["vol"],
-	utilisation: `{prefix}volume [1-${maxVol}]`,
+	utilisation: `volume [1-${maxVol}]`,
 	voiceChannel: true,
 
-	execute(message, args, guild, bot, folders) {
+	execute(message, args, bot) {
 		const queue = bot.player.getQueue(message.guild.id);
 
 		if (!queue || !queue.playing)

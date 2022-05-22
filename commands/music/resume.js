@@ -1,10 +1,10 @@
 module.exports = {
 	name: "resume",
 	aliases: [],
-	utilisation: "{prefix}resume",
+	utilisation: "resume",
 	voiceChannel: true,
 
-	execute(message, args, guild, bot, folders) {
+	execute(message, args, bot) {
 		const queue = bot.player.getQueue(message.guild.id);
 
 		if (!queue)

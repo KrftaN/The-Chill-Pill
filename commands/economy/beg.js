@@ -8,7 +8,7 @@ module.exports = {
 	args: false,
 	maxArgs: 0,
 	cooldown: 30,
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		const randomNumber = Math.floor(Math.random() * 250);
 
 		if (Math.floor(Math.random() * 100) + 1 >= 25) {

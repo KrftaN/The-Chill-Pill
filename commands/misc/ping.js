@@ -4,7 +4,7 @@ module.exports = {
 	description: "Ping!",
 	cooldown: 3,
 	args: false,
-	execute(message, args, guild) {
+	execute(message, args) {
 		message.channel.send(`🏓 | Latency is: **${Date.now() - message.createdTimestamp}ms.**`);
 	},
 };

@@ -1,16 +1,15 @@
+const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 module.exports = {
 	name: "nowplaying",
-	aliases: ["np"],
-	utilisation: "nowplaying",
-	voiceChannel: true,
+	data: new SlashCommandBuilder()
+		.setName("nowplaying")
+		.setDescription("Shows information about the current song."),
+	async execute(interaction, bot) {
+		const queue = bot.player.getQueue(interaction.guild.id);
 
-	execute(message, args, guild, bot) {
-		const queue = bot.player.getQueue(message.guild.id);
-
-		if (!queue || !queue.playing)
-			return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
+		if (!queue) return interaction.reply(`There is no music currently playing!. ❌`);
 
 		const track = queue.current;
 
@@ -32,7 +31,7 @@ module.exports = {
 		);
 
 		embed.setTimestamp();
-		embed.setFooter("Shit bot", message.author.avatarURL({ dynamic: true }));
+		embed.setFooter("Shit bot", interaction.author.avatarURL({ dynamic: true }));
 
 		const saveButton = new MessageButton();
 
@@ -42,6 +41,6 @@ module.exports = {
 
 		const row = new MessageActionRow().addComponents(saveButton);
 
-		message.channel.send({ embeds: [embed], components: [row] });
+		await interaction.reply({ embeds: [embed], components: [row] });
 	},
 };

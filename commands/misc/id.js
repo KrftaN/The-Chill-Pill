@@ -9,7 +9,7 @@ module.exports = {
 	args: false,
 	maxArgs: 1,
 	cooldown: 1,
-	execute(message, args, guild) {
+	execute(message, args) {
 		const target = message.mentions.users.first() || message.author;
 		const targetId = target.id;
 

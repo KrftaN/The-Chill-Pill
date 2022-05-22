@@ -6,7 +6,7 @@ module.exports = {
 	description: "Getting your daily reward!",
 	args: false,
 	cooldown: 1,
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		const date = new Date();
 
 		const day = date.toISOString().slice(0, 10);

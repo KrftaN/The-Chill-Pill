@@ -7,7 +7,7 @@ module.exports = {
 	name: "deploy",
 	aliases: [],
 	creator: true,
-	execute(message, args, guild, bot, folders) {
+	execute(message, args, bot) {
 		const commands = [];
 		const CommandFolders = fs.readdirSync("./slashCommands");
 

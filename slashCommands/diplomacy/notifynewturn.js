@@ -4,7 +4,7 @@ const axios = require("axios");
 const Discord = require("discord.js");
 
 module.exports = {
-	name: "notifyNewTurn",
+	name: "notifynewturn",
 	alias: ["nnt"],
 	data: new SlashCommandBuilder()
 		.setName("notifynewturn")
@@ -13,7 +13,7 @@ module.exports = {
 			return (option = option
 				.setName("role")
 				.setDescription(
-					"Select the role which you want to notify when a new round has begun. If you leave this empty it was defult to @everone."
+					"Select the role which will be notified. If you leave this empty it was defult to @everone."
 				)
 				.setRequired(false));
 		})
@@ -28,15 +28,14 @@ module.exports = {
 			const url =
 				interaction.options.getString("gameurl") ||
 				"https://webdiplomacy.net/board.php?gameID=412557";
-			const role = interaction.options.getMember("role") || "@everyone";
+			const role = interaction.options.getRole("role") || "@everyone";
 
 			let lastDate;
 			let currentDateCheck;
 
-			message.delete();
-
-			message.reply({ content: "I will notify everyone once a new round starts" }).then((m) => {
-				setTimeout(() => m.delete(), 10 * 1000);
+			interaction.reply({
+				content: `I will notify ${role} once a new round starts in ${url}`,
+				ephemeral: true,
 			});
 
 			setInterval(async () => {
@@ -70,9 +69,9 @@ module.exports = {
 							.setColor("#FF0000")
 							.setTimestamp(new Date());
 
-						message.channel.send({ embeds: [embed] });
+						interaction.channel.send({ embeds: [embed] });
 
-						message.channel.send(role).then((message) => {
+						interaction.channel.send(role).then((message) => {
 							message.delete();
 						});
 					});

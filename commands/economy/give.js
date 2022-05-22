@@ -10,7 +10,7 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 10,
 	usage: "<amount you want to give>",
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		const mentionedUser = message.mentions.users.first();
 		const validate = await economy.getGP(message.author.id, message.author.username);
 

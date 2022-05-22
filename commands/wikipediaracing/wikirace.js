@@ -13,7 +13,7 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 0,
 	usage: "<the amount of points it cost to enter the race>",
-	async execute(message, args, guild) {
+	async execute(message, args, bot) {
 		try {
 			if (args[0] > 20)
 				return message

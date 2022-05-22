@@ -10,7 +10,7 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 1,
 	usage: "<amount which you want to withdraw>",
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		try {
 			const validate = await economy.getGP(message.author.id, message.author.username);
 

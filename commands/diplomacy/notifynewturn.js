@@ -7,7 +7,7 @@ module.exports = {
 	aliases: ["nnt"],
 	description: "This is where you can schedule events ect.",
 	guildOnly: true,
-	async execute(message, args, guild, bot, folders) {
+	async execute(message, args, bot) {
 		try {
 			const url = args.shift() || "https://webdiplomacy.net/board.php?gameID=412557";
 			let lastDate;

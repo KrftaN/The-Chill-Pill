@@ -9,7 +9,7 @@ module.exports = {
 	minArgs: 0,
 	maxArgs: 1,
 	cooldown: 0,
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		const target = message.mentions.users.first() || message.author;
 
 		const userName = target.username;

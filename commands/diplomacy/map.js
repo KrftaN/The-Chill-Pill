@@ -9,7 +9,7 @@ module.exports = {
 	description: "checks the users balance",
 	cooldown: 0,
 	usage: "",
-	async execute(message, args, guild) {
+	async execute(message, args,) {
 		const url = args.shift() || "https://webdiplomacy.net/board.php?gameID=412557";
 		Settings.defaultZone = "Europe/Stockholm";
 		await axios(url).then((response) => {

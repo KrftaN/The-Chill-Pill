@@ -8,7 +8,7 @@ module.exports = {
 	minArgs: 0,
 	maxArgs: 1,
 	cooldown: 0,
-	async execute(message, args, guild) {
+	async execute(message, args, bot) {
 		const embedBal = new Discord.MessageEmbed() // This checks your own balance
 			.setColor("#DC143C")
 			.setTitle(`Rules`)

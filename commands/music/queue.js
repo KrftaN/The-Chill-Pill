@@ -3,10 +3,10 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
 	name: "queue",
 	aliases: ["q"],
-	utilisation: "{prefix}queue",
+	utilisation: "queue",
 	voiceChannel: true,
 
-	execute(message, args, guild, bot, folders) {
+	execute(message, args, bot) {
 		const queue = bot.player.getQueue(message.guild.id);
 
 		if (!queue || !queue.playing)

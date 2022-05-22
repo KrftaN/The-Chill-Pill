@@ -13,7 +13,7 @@ module.exports = {
 	maxArgs: 1,
 	minArgs: 1,
 	cooldown: 1,
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		function ciEquals(a, b) {
 			return typeof a === "string" && typeof b === "string"
 				? a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0

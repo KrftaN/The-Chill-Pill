@@ -6,7 +6,7 @@ module.exports = {
 	minArgs: 1,
 	cooldown: 1,
 	usage: "<message>",
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		const mentionedMember = message.mentions.users.first();
 
 		const messageToSend = message.content.slice(message.content.indexOf(">") + 1);

@@ -10,7 +10,7 @@ module.exports = {
 	description: "This is a description",
 	args: false,
 	cooldown: 1,
-	async execute(message, args, guild) {
+	async execute(message, args, ) {
 		message.delete();
 
 		const list = {

@@ -3,23 +3,10 @@ const { QueryType } = require("discord-player");
 module.exports = {
 	name: "play",
 	aliases: ["p"],
-	utilisation: "{prefix}play [song name/URL]",
+	utilisation: "play [song name/URL]",
 	voiceChannel: true,
 
-	async execute(message, args, guild, bot, folders) {
-/* 		const Guild = bot.guilds.cache.get(guild.id);
-
-		const Member = Guild.members.cache.get(message.author.id);
-		const Bot = Guild.members.cache.get(bot.user.id);
-
-		if (Member.voice.channel.id !== Bot.voice.channel.id)
-			return message.channel.send("You have to be connected to a voice channel!"); */
-
-		if (!args[0])
-			return message.channel.send(
-				`${message.author}, Write the name of the music you want to search. ❌`
-			);
-
+	async execute(message, args, bot) {
 		const res = await bot.player.search(args.join(" "), {
 			requestedBy: message.member,
 			searchEngine: QueryType.AUTO,
@@ -39,11 +26,11 @@ module.exports = {
 			return message.channel.send(`${message.author}, I can't join audio channel. ❌`);
 		}
 
+		res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
+
 		await message.channel.send(
 			`Your ${res.playlist ? "Your Playlist" : "Your Track"} Loading... 🎧`
 		);
-
-		res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
 
 		if (!queue.playing) await queue.play();
 	},

@@ -6,7 +6,7 @@ module.exports = {
 	description: "Link to my github repository",
 	args: false,
 	cooldown: 10,
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		const githubEmbed = new Discord.MessageEmbed()
 			.setTitle("Chill Pill Github Repository")
             .setColor("#DC143C")

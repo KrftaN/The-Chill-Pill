@@ -32,20 +32,16 @@ module.exports = {
 
 		shuffleArray(ids);
 
-		try {
-			if (random <= 50) {
-				bot.users.fetch(ids[0]).then((dm) => {
-					dm.send(
-						"You are sus. You are big sussy sussy. You are the imposter, which means that you are meant to sabotage the rest of the immigrants! You can do this by infiltrating the other immagrants and even killing them. **DO NOT DISCLOSE THIS INFORMATION TO ANYONE ELSE**"
-					);
-				});
-			}
-
-			bot.users.fetch(ids[1]).then((dm) => {
-				dm.send("You are the first border patrol member!");
+		if (random <= 50) {
+			bot.users.fetch(ids[0]).then((user) => {
+				user.send(
+					"You are sus. You are big sussy sussy. You are the imposter, which means that you are meant to sabotage the rest of the immigrants! You can do this by infiltrating the other immagrants and even killing them. **DO NOT DISCLOSE THIS INFORMATION TO ANYONE ELSE**"
+				);
 			});
-		} catch {
-			message.channel.send("Something went wrong");
 		}
+
+		bot.users.fetch(ids[1]).then((user) => {
+			user.send("You are the first border patrol member!");
+		});
 	},
 };

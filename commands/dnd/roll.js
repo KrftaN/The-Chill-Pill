@@ -12,7 +12,7 @@ module.exports = {
 	maxArgs: 3,
 	cooldown: 1,
 	usage: "<1d20 + x>",
-	execute(message, args, guild) {
+	execute(message, args, ) {
 		function add(accumulator, a) {
 			return accumulator + a;
 		}

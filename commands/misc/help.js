@@ -1,7 +1,4 @@
 const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const fs = require("fs");
 
 module.exports = {
 	name: "help",
@@ -9,25 +6,26 @@ module.exports = {
 	description: "A list of all commands",
 	args: false,
 	cooldown: 1,
-	execute(message, args, guild, bot, folders) {
+	async execute(message, args, bot) {
 		message.delete();
 
-		const { commands } = bot;
-
+		const { commands, slashCommands, commandAndFolders, slashCommandAndFolders } = bot;
 
 		const embed = new Discord.MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(
-				`This is an open source bot made by KraftaN#8103.\n\nhttps://github.com/KrftaN/The-Chill-Pill\n\n**Enabled commands** \`${commands.size}\``
+				`This is an open source bot made by KraftaN#8103.\n\nhttps://github.com/KrftaN/The-Chill-Pill\n\n**Enabled commands** \`${
+					commands.size + slashCommands.size
+				}\``
 			)
 			.setAuthor(bot.user.username, bot.user.displayAvatarURL({ size: 1024, dynamic: true }))
 			.setTimestamp(new Date())
 			.setFooter("Bot made by KraftaN#8103", bot.user.avatarURL({ dynamic: true }));
 
-		for (let i = 0; i <  Object.keys(folders).length; i++) {
+		for (let i = 0; i < Object.keys(commandAndFolders).length; i++) {
 			let fieldValues = new Array();
 
-			Object.values(folders)[i].forEach((commandName) => {
+			Object.values(commandAndFolders)[i].forEach((commandName) => {
 				fieldValues.push(
 					commands.get(commandName).aliases.length !== 0
 						? `\`${commands.get(commandName).name}(${commands
@@ -37,9 +35,21 @@ module.exports = {
 				);
 			});
 
-			embed.addField(Object.keys(folders)[i].toString(), fieldValues.join(" | "));
+			embed.addField(Object.keys(commandAndFolders)[i].toString(), fieldValues.join(" | "));
 		}
 
-		message.channel.send({ embeds: [embed] });
+		embed.addField("\u200B", "\u200B");
+
+		for (let i = 0; i < Object.keys(slashCommandAndFolders).length; i++) {
+			let fieldValues = new Array();
+
+			Object.values(slashCommandAndFolders)[i].forEach((commandName) => {
+				fieldValues.push(`\`/${slashCommands.get(commandName).name}\``);
+			});
+
+			embed.addField(`/${Object.keys(slashCommandAndFolders)[i]}`, fieldValues.join(" | "));
+		}
+
+		await message.channel.send({ embeds: [embed] });
 	},
 };
