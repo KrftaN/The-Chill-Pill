@@ -1,7 +1,9 @@
-const Discord = require("discord.js");
-const dataBase = require("../../utility/mongodbFramework");
-const functions = require("../../utility/functions");
-
+const { MessageEmbed } = require("discord.js");
+const { getWiki } = require("../../utility/database-functions/wikipoints/getWiki");
+const {
+	wikiRacePointDistrubtion,
+} = require("../../utility/database-functions/wikipoints/wikiRacePointDistrubtion");
+const { onlyNumbers } = require("../../utility/functions/onlyNumbers");
 const { prefix } = require("../../jsonFiles/config.json");
 
 module.exports = {
@@ -22,7 +24,7 @@ module.exports = {
 						setTimeout(() => msg.delete(), 7.5 * 1000);
 					});
 
-			if (functions.onlyNumbers(args[0]) === false)
+			if (onlyNumbers(args[0]) === false)
 				return message
 					.reply(
 						`\nThe proper usage would be: \`${prefix}wikirace <the amount of points it cost to enter the race>\``
@@ -69,7 +71,7 @@ module.exports = {
 
 			const buyIn = args[0];
 
-			const embed = new Discord.MessageEmbed() // This checks your own balance
+			const embed = new MessageEmbed() // This checks your own balance
 				.setColor("#DC143C")
 				.setTitle("🏎️ Wikipedia Race! 🏎️ | Waiting For Players...")
 				.setDescription('Press "S" to start the race and "E" to enter.')
@@ -101,7 +103,7 @@ module.exports = {
 					reaction.users.remove(user);
 
 					if (reaction.emoji.name === emoticons.e && started === false) {
-						const bal = await dataBase.getWiki(user.id, user.username);
+						const bal = await getWiki(user.id, user.username);
 
 						if (bal < buyIn)
 							return message.channel
@@ -127,7 +129,7 @@ module.exports = {
 							delete participantsIdsObj[user.tag];
 						}
 
-						const updatedEmbed = new Discord.MessageEmbed() // This checks your own balance
+						const updatedEmbed = new MessageEmbed() // This checks your own balance
 							.setColor("#DC143C")
 							.setTitle("🏎️ Wikipedia Race! 🏎️")
 							.setDescription('Press "S" to start the race and "E" to enter.')
@@ -166,7 +168,7 @@ module.exports = {
 							.removeAll()
 							.catch((error) => console.error("Failed to clear reactions: ", error));
 
-						const updatedEmbed = new Discord.MessageEmbed()
+						const updatedEmbed = new MessageEmbed()
 							.setColor("#00FF00")
 							.setTitle("🏎️ Wikipedia Race! 🏎️ | Ongoing...")
 							.setDescription(
@@ -198,14 +200,14 @@ module.exports = {
 
 						if (numbersObj[reaction.emoji.name] > participants.length + 1) return;
 
-						dataBase.wikiRacePointDistrubtion(
+						wikiRacePointDistrubtion(
 							winner,
 							buyIn * participants.length,
 							buyIn,
 							participantsIdsArr.filter((e) => e !== winner)
 						);
 
-						const updatedEmbed = new Discord.MessageEmbed()
+						const updatedEmbed = new MessageEmbed()
 							.setColor("#0000FF")
 							.setTitle("🏎️ Wikipedia Race! 🏎️ | Completed...")
 							.setDescription(

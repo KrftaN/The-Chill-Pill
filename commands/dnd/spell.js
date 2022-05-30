@@ -1,8 +1,7 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const functions = require("../../utility/functions.js");
-
+const { MessageEmbed } = require("discord.js");
+const { embedify } = require("../../utility/functions/embedify");
+const { getCharacterCount } = require("../../utility/functions/getCharacterCount");
+const { prefix } = require("../../jsonFiles/config.json");
 const spells = require("../../jsonFiles/spells.json");
 
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
 	minArgs: 1,
 	usage: "<spell name>",
 	cooldown: 1,
-	execute(message, args, ) {
+	execute(message, args) {
 		function ciEquals(a, b) {
 			return typeof a === "string" && typeof b === "string"
 				? a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0
@@ -32,11 +31,11 @@ module.exports = {
 		});
 
 		if (!spellInfo) {
-			message.delete()
+			message.delete();
 			return message
 				.reply({
 					embeds: [
-						functions.embedify(
+						embedify(
 							"That is not a available spell. Either you spelled it wrong, or that's not a SRD licensed spell. Use the command `spelllist` to view all available spells"
 						),
 					],
@@ -46,8 +45,8 @@ module.exports = {
 				});
 		}
 
-		if (functions.getCharacterCount(spellInfo.desc) <= 1024) {
-			const embed = new Discord.MessageEmbed()
+		if (getCharacterCount(spellInfo.desc) <= 1024) {
+			const embed = new MessageEmbed()
 				.setTitle(spellInfo.name)
 				.setColor("#DC143C")
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
@@ -67,7 +66,7 @@ module.exports = {
 					{ inline: true, name: "Class", value: spellInfo.class.toString() },
 					{ name: "\u200B", value: "\u200B" }
 				)
-				.setFooter("Write .spelllist or .spells")
+				.setFooter(`Write ${prefix}spelllist or ${prefix}spells`)
 				.setTimestamp(new Date());
 
 			if (spellInfo?.higher_level) {
@@ -94,7 +93,7 @@ module.exports = {
 
 			message.channel.send({ embeds: [embed] });
 		} else {
-			const embed = new Discord.MessageEmbed()
+			const embed = new MessageEmbed()
 				.setTitle(spellInfo.name.toString())
 				.setColor("#DC143C")
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
@@ -125,11 +124,11 @@ module.exports = {
 				);
 			}
 
-			const embed2 = new Discord.MessageEmbed()
+			const embed2 = new MessageEmbed()
 				.setTitle("Description")
 				.setColor("#DC143C")
 				.setDescription(spellInfo.desc.toString())
-				.setFooter("Write .spelllist or .spells")
+				.setFooter(`Write ${prefix}spelllist or ${prefix}spells`)
 				.setTimestamp(new Date());
 
 			message.channel.send({ embeds: [embed, embed2] });

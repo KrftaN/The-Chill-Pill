@@ -1,12 +1,3 @@
-const { token } = require("../../jsonFiles/config.json");
-
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-
-const Levels = require("discord-xp");
-
-bot.login(token);
 module.exports = {
 	name: "leaderboard",
 	aliases: ["leaderboard", "ranks"],

@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
 	name: "pause",
+	voiceChannel: true,
 	data: new SlashCommandBuilder().setName("pause").setDescription("Pauses the song"),
 	async execute(interaction, bot) {
 		const queue = bot.player.getQueue(interaction.guild.id);

@@ -1,5 +1,5 @@
-const mongoDB = require("../../utility/mongodbFramework");
-const Discord = ({ Client, Intents } = require("discord.js"));
+const { setLevel } = require("../../utility/database-functions/configuration/setLevel");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "setlevelchannel",
@@ -21,21 +21,19 @@ module.exports = {
 
 		const channelId = args[0];
 
-		await mongoDB.setLevel(guild.id, guild.name, channelId);
+		await setLevel(guild.id, guild.name, channelId);
 
-		const embed = new Discord.MessageEmbed()
+		const embed = new MessageEmbed()
 			.setTitle("Set Welcome")
 			.setDescription("**You successfully choosen a level channel!**")
 			.setColor("#DC143C")
-			.addFields(
-				{
-					name: `Channel ID:`,
-					value: `\`${channelId}\``,
-					inline: true,
-				},
-			)
+			.addFields({
+				name: `Channel ID:`,
+				value: `\`${channelId}\``,
+				inline: true,
+			})
 			.setTimestamp(new Date());
 
-		message.channel.send(embed);
+		message.channel.send({ embeds: [embed] });
 	},
 };

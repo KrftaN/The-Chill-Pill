@@ -3,6 +3,7 @@ const { QueryType } = require("discord-player");
 
 module.exports = {
 	name: "play",
+	voiceChannel: true,
 	data: new SlashCommandBuilder()
 		.setName("play")
 		.setDescription("Plays the audio of any youtube clip.")

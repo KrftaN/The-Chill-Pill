@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const cheerio = require("cheerio");
 const axios = require("axios");
 const { DateTime, Settings } = require("luxon");
@@ -9,7 +9,7 @@ module.exports = {
 	description: "checks the users balance",
 	cooldown: 0,
 	usage: "",
-	async execute(message, args,) {
+	async execute(message, args) {
 		const url = args.shift() || "https://webdiplomacy.net/board.php?gameID=412557";
 		Settings.defaultZone = "Europe/Stockholm";
 		await axios(url).then((response) => {
@@ -49,7 +49,7 @@ module.exports = {
 					displayTime = "- ";
 				}
 
-				const embed = new Discord.MessageEmbed()
+				const embed = new MessageEmbed()
 					.setTitle(`${currentDateCheck} | Current Diplomacy Map`)
 					.setImage(currentMap.toString())
 					.setURL(url.toString())

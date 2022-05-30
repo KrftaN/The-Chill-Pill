@@ -1,6 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "id",
@@ -15,7 +13,7 @@ module.exports = {
 
 		const { channel } = message;
 
-		const embed = new Discord.MessageEmbed()
+		const embed = new MessageEmbed()
 			.setTitle("ID's")
 			.setDescription("If you tag someone else you'll get their ID instead of yours.")
 			.setColor("#DC143C")

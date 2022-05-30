@@ -4,6 +4,7 @@ const { Player, QueueRepeatMode } = require("discord-player");
 
 module.exports = {
 	name: "loop",
+	voiceChannel: true,
 	data: new SlashCommandBuilder()
 		.setName("loop")
 		.setDescription("Loops the current track or queue.")

@@ -1,7 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-
+const { MessageEmbed } = require("discord.js");
 const spells = require("../../jsonFiles/spells.json");
 
 module.exports = {
@@ -10,7 +7,7 @@ module.exports = {
 	description: "This is a description",
 	args: false,
 	cooldown: 1,
-	async execute(message, args, ) {
+	async execute(message, args) {
 		message.delete();
 
 		const list = {
@@ -48,7 +45,7 @@ module.exports = {
 			list[firstLetter].push(spell.name);
 		});
 
-		const embed = new Discord.MessageEmbed()
+		const embed = new MessageEmbed()
 			.setTitle("All Available spells")
 			.setTimestamp(new Date())
 			.setColor("#DC143C");

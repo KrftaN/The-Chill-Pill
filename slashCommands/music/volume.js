@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const wait = require("node:timers/promises").setTimeout;
-const { Player, QueueRepeatMode } = require("discord-player");
 const maxVol = require("../../utility/config").opt.maxVol;
 
 module.exports = {
 	name: "volume",
+	voiceChannel: true,
 	data: new SlashCommandBuilder()
 		.setName("volume")
 		.setDescription("Changes the volume of the video.")

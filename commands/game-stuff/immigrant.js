@@ -1,9 +1,3 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const { token } = require("../../jsonFiles/config.json");
-bot.login(token);
-
 module.exports = {
 	name: "immigrant",
 	aliases: ["immigrantgamemode"],

@@ -88,7 +88,7 @@
 	"allahs_number": {
 		"name": "Allah's Number",
 		"price": "infinite",
-		"description": "This is the number of the one true god. You were blessed with this number due to your obsessive Halal Kebab eating. [This item will smite a chosen user, it will kill them meaning they will lose all their items, as well as money. Can be circumbented with a life savers's kit.]",
+		"description": "This is the number of the one true god. You were blessed with this number due to your obsessive Halal Kebab eating. [This item will smite a chosen user, it will kill them meaning they will lose all their items, as well as money. Can be circumvented with a life savers's kit.]",
 		"emoji": "🕋",
 		"id": ["allahs_number", "number", "allah"],
 		"type": "Consumable",

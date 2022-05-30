@@ -1,5 +1,5 @@
-const mongoDB = require("../../utility/mongodbFramework");
-const Discord = ({ Client, Intents } = require("discord.js"));
+const { setWelcome } = require("../../utility/database-functions/configuration/setLevel");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "setwelcomemessage",
@@ -24,13 +24,13 @@ module.exports = {
 		args.shift();
 		welcomeMessage = args.join(" ");
 
-	/* 	module.exports.validationJoinCache = {};
+		/* 	module.exports.validationJoinCache = {};
 
 		validationJoinCache[guild.id] = [channelId, welcomeMessage]; */
 
-		await mongoDB.setWelcome(guild.id, guild.name, channelId, welcomeMessage);
+		await setWelcome(guild.id, guild.name, channelId, welcomeMessage);
 
-		const embed = new Discord.MessageEmbed()
+		const embed = new MessageEmbed()
 			.setTitle("Set Welcome")
 			.setDescription("**You successfully set up a welcome message!**")
 			.setColor("#DC143C")
@@ -51,6 +51,6 @@ module.exports = {
 			)
 			.setTimestamp(new Date());
 
-		message.channel.send(embed);
+		message.channel.send({ embeds: [embed] });
 	},
 };

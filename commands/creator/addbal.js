@@ -1,4 +1,6 @@
-const economy = require("../../utility/mongodbFramework");
+const { addBal } = require("../../utility/database-functions/economy/addBal");
+const { getGP } = require("../../utility/database-functions/economy/getGP");
+const { removeBal } = require("../../utility/database-functions/economy/removeBal");
 
 module.exports = {
 	name: "addbal",
@@ -13,8 +15,8 @@ module.exports = {
 	async execute(message, args) {
 		const mentionedUser = message.mentions.users.first();
 
-		if (args[1] === "clear" || args[1] === "Clear") {
-			economy.removeBal(mentionedUser.id, await economy.getGP(mentionedUser.id)[0]);
+		if (args[1]?.toLowerCase() === "clear") {
+			removeBal(mentionedUser.id, await getGP(mentionedUser.id)[0]);
 
 			return message.reply(`You have successfully cleared ${mentionedUser.username}'s balance.`);
 		}
@@ -25,9 +27,9 @@ module.exports = {
 
 		if (!matches) return message.channel.send("You must only send a valid number.");
 
-		await economy.getGP(mentionedUser.id);
+		await getGP(mentionedUser.id);
 
-		await economy.addBal(mentionedUser.id, args[1]);
+		await addBal(mentionedUser.id, args[1]);
 
 		message.channel.send(
 			`You have successfully added **${args[1]}** GP to **${mentionedUser.username}'s** balance`

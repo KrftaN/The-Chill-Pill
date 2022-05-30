@@ -1,4 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "help",
@@ -11,7 +11,7 @@ module.exports = {
 
 		const { commands, slashCommands, commandAndFolders, slashCommandAndFolders } = bot;
 
-		const embed = new Discord.MessageEmbed()
+		const embed = new MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(
 				`This is an open source bot made by KraftaN#8103.\n\nhttps://github.com/KrftaN/The-Chill-Pill\n\n**Enabled commands** \`${

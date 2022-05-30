@@ -1,5 +1,6 @@
-const Discord = require("discord.js");
-const economy = require("../../utility/mongodbFramework");
+const { MessageEmbed } = require("discord.js");
+const { getGP } = require("../../utility/database-functions/economy/getGP");
+const { withdraw } = require("../../utility/database-functions/economy/withdraw");
 
 module.exports = {
 	name: "withdraw",
@@ -10,9 +11,9 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 1,
 	usage: "<amount which you want to withdraw>",
-	async execute(message, args, ) {
+	async execute(message, args) {
 		try {
-			const validate = await economy.getGP(message.author.id, message.author.username);
+			const validate = await getGP(message.author.id, message.author.username);
 
 			const matches1 = args[0].match(/^[0-9]+$/);
 
@@ -23,11 +24,11 @@ module.exports = {
 
 			args[0] = args[0] === "all" ? validate[1] : Number(args[0]);
 
-			const balance = await economy.withdraw(message.author.id, args[0]);
+			const balance = await withdraw(message.author.id, args[0]);
 
-			const embedBal = new Discord.MessageEmbed()
+			const embedBal = new MessageEmbed()
 				.setColor("#DC143C")
-				.setDescription(`You successfully withdrawn ${args[0]}.`)
+				.setDescription(`You successfully withdrew ${args[0]}.`)
 				.setTitle(`${message.author.username}'s Balance`)
 				.addField("Wallet", `***${balance[0]}*** GP`)
 				.addField("Bank", `***${balance[1]}*** GP`);

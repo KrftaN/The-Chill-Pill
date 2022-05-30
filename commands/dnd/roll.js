@@ -1,6 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "roll",
@@ -12,7 +10,7 @@ module.exports = {
 	maxArgs: 3,
 	cooldown: 1,
 	usage: "<1d20 + x>",
-	execute(message, args, ) {
+	execute(message, args) {
 		function add(accumulator, a) {
 			return accumulator + a;
 		}
@@ -21,19 +19,19 @@ module.exports = {
 
 		const dice = Number(args[0].slice(args[0].indexOf("d") + 1));
 
-		const embed1 = new Discord.MessageEmbed()
+		const embed1 = new MessageEmbed()
 			.setTitle("❌ Invalid input! ❌")
 			.setColor("#FFFF00")
 			.setDescription("Example: `roll 4d6 + 5` || `roll 1d20`")
 			.setTimestamp(new Date());
 
-		const embed2 = new Discord.MessageEmbed()
+		const embed2 = new MessageEmbed()
 			.setTitle("❌ Invalid input! ❌")
 			.setColor("#FFFF00")
 			.setDescription("**Cannot** roll more than 100 dice!")
 			.setTimestamp(new Date());
 
-		const embed3 = new Discord.MessageEmbed()
+		const embed3 = new MessageEmbed()
 			.setTitle("❌ Invalid input! ❌")
 			.setColor("#FFFF00")
 			.setDescription("**Cannot** roll a die with more than 100 sides!")
@@ -63,7 +61,7 @@ module.exports = {
 				? result.reduce(add, 0) - Number(args[2])
 				: result.reduce(add, 0);
 
-		const embed4 = new Discord.MessageEmbed()
+		const embed4 = new MessageEmbed()
 			.setTitle("🎲Rolling Dice🎲")
 			.setColor("#DC143C")
 			.setDescription(`[**${args[0]}** : ${result.join(" | ")}] \n **The Sum: \`${sum}\`**`)

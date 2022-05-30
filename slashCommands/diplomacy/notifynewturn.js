@@ -15,7 +15,7 @@ module.exports = {
 				.setDescription(
 					"Select the role which will be notified. If you leave this empty it was defult to @everone."
 				)
-				.setRequired(false));
+				.setRequired(true));
 		})
 		.addStringOption((option) => {
 			return (option = option
@@ -28,7 +28,6 @@ module.exports = {
 			const url =
 				interaction.options.getString("gameurl") ||
 				"https://webdiplomacy.net/board.php?gameID=412557";
-			const role = interaction.options.getRole("role") || "@everyone";
 
 			let lastDate;
 			let currentDateCheck;

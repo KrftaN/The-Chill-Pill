@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
 	name: "stop",
+	voiceChannel: true,
 	data: new SlashCommandBuilder().setName("stop").setDescription("Stops the current queue."),
 	async execute(interaction, bot) {
 		const queue = bot.player.getQueue(interaction.guild.id);

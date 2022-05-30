@@ -1,10 +1,3 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const { Player } = require("discord-player");
-
-
-
 module.exports = {
 	name: "clearqueue",
 	aliases: ["cq"],

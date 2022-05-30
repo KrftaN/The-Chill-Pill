@@ -1,6 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
+const Discord = require("discord.js");
 
 module.exports = {
 	name: "shuffle",

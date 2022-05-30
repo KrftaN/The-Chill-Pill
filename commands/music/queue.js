@@ -13,12 +13,13 @@ module.exports = {
 			return message.channel.send(`${message.author}, There is no music currently playing!. ❌`);
 
 		if (!queue.tracks[0])
-			return message.channel.send(`${message.author}, No music in queue after current. ❌`);
+			return message.channel.send(`${message.author}, No music in queue after current song. ❌`);
 
 		const embed = new MessageEmbed();
 		const methods = ["🔁", "🔂"];
 
 		embed.setColor("RED");
+		
 		embed.setThumbnail(message.guild.iconURL({ size: 2048, dynamic: true }));
 		embed.setTitle(`Server Music List - ${message.guild.name} ${methods[queue.repeatMode]}`);
 
@@ -34,13 +35,13 @@ module.exports = {
 				: `There are **${songs}** Songs in the List.`;
 
 		embed.setDescription(
-			`Currently Playing: \`${queue.current.title}\`\n\n${tracks
+			`Currently Playing: *${queue.current.title}*\n\n${tracks
 				.slice(0, 5)
 				.join("\n")}\n\n${nextSongs}`
 		);
 
 		embed.setTimestamp();
-		embed.setFooter("This took too long to make ;(", message.author.avatarURL({ dynamic: true }));
+		embed.setFooter("Hello.", message.author.avatarURL({ dynamic: true }));
 
 		message.channel.send({ embeds: [embed] });
 	},

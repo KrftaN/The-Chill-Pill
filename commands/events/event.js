@@ -1,13 +1,13 @@
 const { DateTime, Settings } = require("luxon");
-const Discord = require("discord.js");
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const eventDB = require("../../utility/mongodbFramework");
-const functions = require("../../utility/functions.js");
+const { MessageEmbed } = require("discord.js");
+const { embedify } = require("../../utility/functions/embedify");
 
-const { token } = require("../../jsonFiles/config.json");
-
-bot.login(token);
+const { changeSchedule } = require("../../utility/database-functions/event/changeSchedule");
+const { deleteSchedule } = require("../../utility/database-functions/event/deleteSchedule");
+const { getDisplayText } = require("../../utility/database-functions/event/getDisplayText");
+const { getScheduleIds } = require("../../utility/database-functions/event/getScheduleIds");
+const { iniateSchedule } = require("../../utility/database-functions/event/iniateSchedule");
+const { validateSchedule } = require("../../utility/database-functions/event/validateSchedule");
 
 module.exports = {
 	name: "event",
@@ -28,8 +28,9 @@ module.exports = {
 		let scheduleInfo;
 		let embedId;
 		let embedOption;
-		Settings.defaultZone = "Europe/Stockholm";
 		let dateThen;
+
+		Settings.defaultZone = "Europe/Stockholm";
 		const dateNow = DateTime.now().setZone("Europe/Stockholm").toMillis();
 
 		const argsLower = args.map(function (arg) {
@@ -136,6 +137,7 @@ module.exports = {
 					setTimeout(() => message.delete(), 25 * 1000);
 				});
 		}
+		message.delete();
 		message.reply({ content: "Check your DM'S" }).then((msg) => {
 			setTimeout(() => msg.delete(), 10 * 1000);
 		});
@@ -145,7 +147,7 @@ module.exports = {
 			const users2Length = users2.length;
 			const users3Length = users3.length;
 
-			const updatedDndEmbed = new Discord.MessageEmbed()
+			const updatedDndEmbed = new MessageEmbed()
 				.setTitle(`**D&D** at ${displayTime}`)
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
 				.setDescription(displayText[0])
@@ -175,7 +177,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const updatedGameEventEmbed = new Discord.MessageEmbed()
+			const updatedGameEventEmbed = new MessageEmbed()
 				.setTitle(`**Game Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -206,7 +208,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const updatedEventEmbed = new Discord.MessageEmbed()
+			const updatedEventEmbed = new MessageEmbed()
 				.setTitle(`**Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -249,7 +251,7 @@ module.exports = {
 			let i = 1;
 			let originalChanel;
 			message.author
-				.send({ embeds: [functions.embedify("Choose preset. `<d&d>, <game event> or <event>`")] })
+				.send({ embeds: [embedify("Choose preset. `<d&d>, <game event> or <event>`")] })
 				.then(async (m) => {
 					originalChanel = message.channel.name;
 					m.react("1️⃣");
@@ -296,13 +298,15 @@ module.exports = {
 
 						m.edit({
 							embeds: [
-								functions.embedify(
-									`chose \`${embedOption === 1 ? "D&D" : embedOption === 2 ? "Game Event" : "Event"}\``
+								embedify(
+									`chose \`${
+										embedOption === 1 ? "D&D" : embedOption === 2 ? "Game Event" : "Event"
+									}\``
 								),
 							],
 						});
 						m.channel.send({
-							embeds: [functions.embedify(`What do you want the description to be?`)],
+							embeds: [embedify(`What do you want the description to be?`)],
 						});
 
 						messageCollecting();
@@ -361,13 +365,13 @@ module.exports = {
 							if (i >= configQuestions.length) {
 								resolve();
 								collected.channel.send({
-									embeds: [functions.embedify(`**Sending message in:** \`${originalChanel}\`...`)],
+									embeds: [embedify(`**Sending message in:** \`${originalChanel}\`...`)],
 								});
 								messageCollector.stop();
 								return;
 							}
 
-							m.channel.send({ embeds: [functions.embedify(configQuestions[i])] });
+							m.channel.send({ embeds: [embedify(configQuestions[i])] });
 
 							i += 1;
 						});
@@ -389,7 +393,7 @@ module.exports = {
 		// Sending the acutal embed
 
 		function firstExecution() {
-			const dndEmbed = new Discord.MessageEmbed()
+			const dndEmbed = new MessageEmbed()
 				.setTitle(`**D&D** at ${displayTime}`)
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
 				.setDescription(config[0])
@@ -420,7 +424,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const gameEventEmbed = new Discord.MessageEmbed()
+			const gameEventEmbed = new MessageEmbed()
 				.setTitle(`**Game Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -452,7 +456,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const eventEmbed = new Discord.MessageEmbed()
+			const eventEmbed = new MessageEmbed()
 				.setTitle(`**Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -499,7 +503,7 @@ module.exports = {
 					embedId = message.id;
 
 					if (embedOption !== 1) {
-						await eventDB.iniateSchedule(
+						await iniateSchedule(
 							embedId,
 							dateNow,
 							dateThen,
@@ -511,7 +515,7 @@ module.exports = {
 							config[2]
 						);
 					} else {
-						await eventDB.iniateSchedule(
+						await iniateSchedule(
 							embedId,
 							dateNow,
 							dateThen,
@@ -559,7 +563,7 @@ module.exports = {
 							message.channel
 								.send({
 									embeds: [
-										functions.embedify(
+										embedify(
 											"Are you sure you want to delete this schedule? If not ignore this message,"
 										),
 									],
@@ -568,7 +572,7 @@ module.exports = {
 						} else if (emojiName === "edit" && user.id !== originalSender) {
 							return message.channel
 								.send({
-									embeds: [functions.embedify("You cannot edit this embed!")],
+									embeds: [embedify("You cannot edit this embed!")],
 								})
 								.then((msg) => {
 									setTimeout(() => msg.delete(), 3 * 1000);
@@ -577,7 +581,7 @@ module.exports = {
 							message.channel
 								.send({
 									embeds: [
-										functions.embedify(
+										embedify(
 											"Are you sure you want to delete this schedule? If not ignore this message."
 										),
 									],
@@ -600,9 +604,9 @@ module.exports = {
 
 										if (emoji === "✅") {
 											msg.edit({
-												embeds: [functions.embedify("You've successfully deleted the schedule")],
+												embeds: [embedify("You've successfully deleted the schedule")],
 											});
-											eventDB.deleteSchedule(embedId);
+											deleteSchedule(embedId);
 											collector.stop();
 											message.delete();
 											setTimeout(() => msg.delete(), 3 * 1000);
@@ -612,7 +616,7 @@ module.exports = {
 									collector1.on("end", (collected, reason) => {
 										if (reason === "time") {
 											msg.edit(
-												functions.embedify({
+												embedify({
 													embeds: [
 														"You ran out of time. React with the bin again to reinitiate this process",
 													],
@@ -631,9 +635,9 @@ module.exports = {
 								message: { id },
 							} = reaction;
 
-							const eventConfig = await eventDB.getDisplayText(embedId);
+							const eventConfig = await getDisplayText(embedId);
 
-							scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
+							scheduleInfo = await changeSchedule(id, user.username, user.id, emojiName);
 
 							message.edit({
 								embeds: [
@@ -656,25 +660,29 @@ module.exports = {
 						message.reactions
 							.removeAll()
 							.catch((error) => console.error("Failed to clear reactions: ", error));
-						message.edit({
-							embeds: [
-								functions.embedify(
-									`Hope you all enjoyed the ${
-										embedOption === 1 ? "session!" : embedOption === 2 ? "game event!" : "event!"
-									}`
-								),
-							],
-						});
-						eventDB.deleteSchedule(embedId);
+
+						if (reason === "time") {
+							message.edit({
+								embeds: [
+									embedify(
+										`Hope you all enjoyed the ${
+											embedOption === 1 ? "session!" : embedOption === 2 ? "game event!" : "event!"
+										}`
+									),
+								],
+							});
+						}
+
+						deleteSchedule(embedId);
 
 						setTimeout(() => message.delete(), 43200000);
 					});
 
 					if (timer1 - 100 >= 0) {
 						setTimeout(async () => {
-							await eventDB.validateSchedule(embedId);
+							await validateSchedule(embedId);
 
-							const userIds = await eventDB.getScheduleIds(embedId);
+							const userIds = await getScheduleIds(embedId);
 
 							if (!userIds.length === 0) return;
 

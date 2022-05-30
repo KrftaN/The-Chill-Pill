@@ -1,6 +1,6 @@
 module.exports = {
 	opt: {
-		maxVol: 150,
+		maxVol: 200,
 		loopMessage: false, //Please don't touch otherwise I will kill you
 		discordPlayer: {
 			ytdlOptions: {

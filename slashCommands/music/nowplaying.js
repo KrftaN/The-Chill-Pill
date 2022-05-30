@@ -3,6 +3,7 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 module.exports = {
 	name: "nowplaying",
+	voiceChannel: true,
 	data: new SlashCommandBuilder()
 		.setName("nowplaying")
 		.setDescription("Shows information about the current song."),
@@ -29,9 +30,8 @@ module.exports = {
 				methods[queue.repeatMode]
 			}**\n${track.requestedBy}`
 		);
-
+		embed.setFooter(bot.user.avatarURL({ dynamic: true }));
 		embed.setTimestamp();
-		embed.setFooter("Shit bot", interaction.author.avatarURL({ dynamic: true }));
 
 		const saveButton = new MessageButton();
 

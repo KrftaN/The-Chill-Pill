@@ -1,7 +1,4 @@
-const Discord = ({ Client, Intents } = require("discord.js"));
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const functions = require("../../utility/functions.js");
+const {MessageEmbed} = require("discord.js");
 const wait = require("node:timers/promises").setTimeout;
 
 module.exports = {

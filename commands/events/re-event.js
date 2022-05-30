@@ -1,13 +1,13 @@
 const { DateTime, Settings } = require("luxon");
-const Discord = require("discord.js");
-const intents = new Discord.Intents(32767);
-const bot = new Client({ intents });
-const eventDB = require("../../utility/mongodbFramework");
-const functions = require("../../utility/functions.js");
+const { MessageEmbed } = require("discord.js");
+const { embedify } = require("../../utility/functions/embedify");
 
-const { token } = require("../../jsonFiles/config.json");
-
-bot.login(token);
+const { changeSchedule } = require("../../utility/database-functions/event/changeSchedule");
+const { deleteSchedule } = require("../../utility/database-functions/event/deleteSchedule");
+const { getDisplayText } = require("../../utility/database-functions/event/getDisplayText");
+const { getEssentialInfo } = require("../../utility/database-functions/event/getEssentialInfo");
+const { getScheduleIds } = require("../../utility/database-functions/event/getScheduleIds");
+const { validateSchedule } = require("../../utility/database-functions/event/validateSchedule");
 
 module.exports = {
 	name: "re-event",
@@ -26,7 +26,7 @@ module.exports = {
 	<tomorrow[or tm] 15:45>`,
 	async execute(message, args) {
 		Settings.defaultZone = "Europe/Stockholm";
-		const essentialInfo = await eventDB.getEssentialInfo(args[0]); //	timeIniated, timeFinish, originalSender, originalSenderUsername, embedOption,
+		const essentialInfo = await getEssentialInfo(args[0]); //	timeIniated, timeFinish, originalSender, originalSenderUsername, embedOption,
 
 		let scheduleInfo;
 		const embedId = args[0];
@@ -34,7 +34,7 @@ module.exports = {
 
 		message.channel
 			.send({
-				embeds: [functions.embedify(`Re-launched the event embed. Embed message id: ${embedId}.`)],
+				embeds: [embedify(`Re-launched the event embed. Embed message id: ${embedId}.`)],
 			})
 			.then((message) => {
 				setTimeout(() => message.delete(), 5 * 1000);
@@ -66,7 +66,7 @@ module.exports = {
 			const users2Length = users2.length;
 			const users3Length = users3.length;
 
-			const updatedDndEmbed = new Discord.MessageEmbed()
+			const updatedDndEmbed = new MessageEmbed()
 				.setTitle(`**D&D** at ${displayTime}`)
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
 				.setDescription(displayText[0])
@@ -96,7 +96,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const updatedGameEventEmbed = new Discord.MessageEmbed()
+			const updatedGameEventEmbed = new MessageEmbed()
 				.setTitle(`**Game Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -127,7 +127,7 @@ module.exports = {
 				.setFooter(`This message was issued by ${msgSender}`)
 				.setTimestamp(new Date());
 
-			const updatedEventEmbed = new Discord.MessageEmbed()
+			const updatedEventEmbed = new MessageEmbed()
 				.setTitle(`**Event** at ${displayTime}`)
 				.setThumbnail(
 					"https://cdn.discordapp.com/attachments/836600699080671262/855459529763323914/The_Chill_Pill.png"
@@ -198,22 +198,18 @@ module.exports = {
 				if (emojiName === "edit" && user.id === originalSender) {
 					message.channel
 						.send(
-							functions.embedify(
-								"Are you sure you want to delete this schedule? If not ignore this message,"
-							)
+							embedify("Are you sure you want to delete this schedule? If not ignore this message,")
 						)
 						.then((msg) => {});
 				} else if (emojiName === "edit" && user.id !== originalSender) {
-					return message.channel
-						.send(functions.embedify("You cannot edit this embed!"))
-						.then((msg) => {
-							setTimeout(() => msg.delete(), 3 * 1000);
-						});
+					return message.channel.send(embedify("You cannot edit this embed!")).then((msg) => {
+						setTimeout(() => msg.delete(), 3 * 1000);
+					});
 				} else if (emojiName === "delete" && user.id === originalSender) {
 					message.channel
 						.send({
 							embeds: [
-								functions.embedify(
+								embedify(
 									"Are you sure you want to delete this schedule? If not ignore this message."
 								),
 							],
@@ -232,9 +228,9 @@ module.exports = {
 
 								if (emoji === "✅") {
 									msg.edit({
-										embeds: [functions.embedify("You've successfully deleted the schedule")],
+										embeds: [embedify("You've successfully deleted the schedule")],
 									});
-									eventDB.deleteSchedule(embedId);
+									deleteSchedule(embedId);
 									collector.stop();
 									message.delete();
 									setTimeout(() => msg.delete(), 3 * 1000);
@@ -244,7 +240,7 @@ module.exports = {
 							collector1.on("end", (collected, reason) => {
 								if (reason === "time") {
 									msg.edit(
-										functions.embedify(
+										embedify(
 											"You ran out of time. React with the bin again to reinitiate this process"
 										)
 									);
@@ -261,9 +257,9 @@ module.exports = {
 						message: { id },
 					} = reaction;
 
-					const eventConfig = await eventDB.getDisplayText(embedId);
+					const eventConfig = await getDisplayText(embedId);
 
-					scheduleInfo = await eventDB.changeSchedule(id, user.username, user.id, emojiName);
+					scheduleInfo = await changeSchedule(id, user.username, user.id, emojiName);
 
 					message.edit({
 						embeds: [
@@ -287,13 +283,13 @@ module.exports = {
 					.removeAll()
 					.catch((error) => console.error("Failed to clear reactions: ", error));
 				message.edit(
-					functions.embedify(
+					embedify(
 						`Hope you all enjoyed the ${
 							embedOption === 1 ? "session!" : embedOption === 2 ? "game event!" : "event!"
 						}`
 					)
 				);
-				eventDB.deleteSchedule(embedId);
+				deleteSchedule(embedId);
 
 				message.delete({
 					timeout: 43200000,
@@ -302,9 +298,9 @@ module.exports = {
 
 			if (timer1 - 100 >= 0) {
 				setTimeout(async () => {
-					await eventDB.validateSchedule(embedId);
+					await validateSchedule(embedId);
 
-					const userIds = await eventDB.getScheduleIds(embedId);
+					const userIds = await getScheduleIds(embedId);
 
 					if (!userIds.length === 0) return;
 

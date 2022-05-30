@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
 	name: "clearqueue",
+	voiceChannel: true,
 	data: new SlashCommandBuilder().setName("clearqueue").setDescription("Clears the current queue."),
 	async execute(interaction, bot) {
 		const queue = bot.player.getQueue(interaction.guild.id);

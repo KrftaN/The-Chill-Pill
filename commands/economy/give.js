@@ -1,5 +1,5 @@
-const Discord = require("discord.js");
-const economy = require("../../utility/mongodbFramework");
+const { getGP } = require("../../utility/database-functions/economy/getGP");
+const { give } = require("../../utility/database-functions/economy/give");
 
 module.exports = {
 	name: "give",
@@ -10,9 +10,9 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 10,
 	usage: "<amount you want to give>",
-	async execute(message, args, ) {
+	async execute(message, args) {
 		const mentionedUser = message.mentions.users.first();
-		const validate = await economy.getGP(message.author.id, message.author.username);
+		const validate = await getGP(message.author.id, message.author.username);
 
 		try {
 			const matches2 = args[1].match(/^[0-9]+$/);
@@ -22,11 +22,10 @@ module.exports = {
 
 			if (args[1] > validate[0]) return message.channel.send("haha cant do that ur too poor");
 
-			const usersBal = await economy.give(
+			const usersBal = await give(
 				message.author.id,
 				mentionedUser.id,
 				args[1],
-				message.author.username,
 				mentionedUser.username
 			);
 

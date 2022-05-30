@@ -32,26 +32,29 @@ module.exports = {
 			Response.setDescription(`Amount cannot exceed 100, and cannot be under 1.`);
 			return interaction.reply({ embeds: [Response] });
 		}
+		try {
+			if (target) {
+				let i = 0;
+				const filtered = new Array();
+				await messages.filter((m) => {
+					if (m.author.id === target.id && amount > i) {
+						filtered.push(m);
+						i++;
+					}
+				});
 
-		if (target) {
-			let i = 0;
-			const filtered = new Array();
-			await messages.filter((m) => {
-				if (m.author.id === target.id && amount > i) {
-					filtered.push(m);
-					i++;
-				}
-			});
-
-			await channel.bulkDelete(filtered, true).then((messages) => {
-				response.setDescription(`🧹 Cleared ${messages.size} from ${target}`);
-				interaction.reply({ embeds: [response], ephemeral: true });
-			});
-		} else {
-			await channel.bulkDelete(amount, true).then((messages) => {
-				response.setDescription(`🧹 Cleared ${messages.size} from this channel`);
-				interaction.reply({ embeds: [response], ephemeral: true });
-			});
+				await channel.bulkDelete(filtered, true).then((messages) => {
+					response.setDescription(`🧹 Cleared ${messages.size} from ${target}`);
+					interaction.reply({ embeds: [response], ephemeral: true });
+				});
+			} else {
+				await channel.bulkDelete(amount, true).then((messages) => {
+					response.setDescription(`🧹 Cleared ${messages.size} from this channel`);
+					interaction.reply({ embeds: [response], ephemeral: true });
+				});
+			}
+		} catch (err) {
+			console.log(err);
 		}
 	},
 };

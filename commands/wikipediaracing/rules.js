@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "rules",
@@ -9,7 +9,7 @@ module.exports = {
 	maxArgs: 1,
 	cooldown: 0,
 	async execute(message, args, bot) {
-		const embedBal = new Discord.MessageEmbed() // This checks your own balance
+		const embedBal = new MessageEmbed()
 			.setColor("#DC143C")
 			.setTitle(`Rules`)
 			.setDescription(`List of rules:`)

@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
 	name: "skip",
+	voiceChannel: true,
 	data: new SlashCommandBuilder()
 		.setName("skip")
 		.setDescription("Skipes to the next song song in the queue."),
@@ -16,7 +17,5 @@ module.exports = {
 		await interaction.reply(
 			success ? `**${queue.current.title}**, Skipped song ✅` : `Something went wrong ❌`
 		);
-
-		await interaction.reply(`🏓 | Latency is: **${Date.now() - interaction.createdTimestamp}ms!**`);
 	},
 };

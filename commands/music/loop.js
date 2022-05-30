@@ -7,7 +7,7 @@ module.exports = {
 	voiceChannel: true,
 	cooldown: 3,
 
-	execute(message, args,  bot) {
+	execute(message, args, bot) {
 		args[0] = args[0] || "empty";
 
 		const queue = bot.player.getQueue(message.guild.id);

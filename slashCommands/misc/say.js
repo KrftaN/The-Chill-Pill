@@ -3,6 +3,7 @@ const wait = require("node:timers/promises").setTimeout;
 
 module.exports = {
 	name: "say",
+	cooldown: 1.5,
 	data: new SlashCommandBuilder()
 		.setName("say")
 		.setDescription("Makes the bot send a custom message")
@@ -19,7 +20,7 @@ module.exports = {
 
 		await interaction.channel.send(message.toString());
 		await interaction.reply({
-			content: `✅Successfully sent: \`${message.toString()}\``,
+			content: `✅ Successfully sent: \`${message.toString()}\``,
 			ephemeral: true,
 		});
 	},

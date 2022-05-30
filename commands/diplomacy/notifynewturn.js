@@ -1,6 +1,6 @@
 const cheerio = require("cheerio");
 const axios = require("axios");
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "notifynewturn",
@@ -42,7 +42,7 @@ module.exports = {
 							"href"
 						)}`;
 
-						const embed = new Discord.MessageEmbed()
+						const embed = new MessageEmbed()
 							.setTitle(`${currentDate.toString()} | New Round Lads!`)
 							.setImage(currentMap.toString())
 							.setDescription("A new round has started, make sure to finish your moves!")
@@ -50,7 +50,7 @@ module.exports = {
 							.setColor("#FF0000")
 							.setTimestamp(new Date());
 
-						message.channel.send({ embeds: [embed]});
+						message.channel.send({ embeds: [embed] });
 
 						message.channel.send("@everyone").then((message) => {
 							message.delete();

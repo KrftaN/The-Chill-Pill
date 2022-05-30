@@ -1,7 +1,6 @@
 const Levels = require("discord-xp");
 const mongo = require("../../utility/mongo.js");
-const functions = require("../../utility/functions.js");
-
+const { embedify } = require("../../utility/functions/embedify");
 module.exports = {
 	name: "level",
 	aliases: ["rank"],
@@ -21,11 +20,11 @@ module.exports = {
 
 				message.channel.send({
 					embeds: [
-						functions.embedify(
+						embedify(
 							`> **${target.tag}** is currently level **${user.level}** in **${message.guild.name}**`
 						),
 					],
-				}); // We show the level.
+				});
 			} finally {
 				mongoose.connection.close();
 			}

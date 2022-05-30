@@ -1,4 +1,4 @@
-const economy = require("../../utility/mongodbFramework");
+const { checkUserDate } = require("../../utility/database-functions/economy/checkUserDate");
 
 module.exports = {
 	name: "daily",
@@ -6,12 +6,12 @@ module.exports = {
 	description: "Getting your daily reward!",
 	args: false,
 	cooldown: 1,
-	async execute(message, args, ) {
+	async execute(message, args) {
 		const date = new Date();
 
 		const day = date.toISOString().slice(0, 10);
 
-		const userDate = await economy.checkUserDate(message.author.id, day, message.author.username);
+		const userDate = await checkUserDate(message.author.id, day, message.author.username);
 
 		if (userDate === false)
 			return message.reply(

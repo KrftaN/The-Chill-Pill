@@ -1,5 +1,5 @@
-const Discord = require("discord.js");
-const economy = require("../../utility/mongodbFramework");
+const {MessageEmbed} = require("discord.js");
+const { getWiki } = require("../../utility/database-functions/wikipoints/getWiki");
 
 module.exports = {
 	name: "wikibalance",
@@ -14,9 +14,9 @@ module.exports = {
 
 		const userName = target.username;
 
-		const balance = await economy.getWiki(target.id, userName);
+		const balance = await getWiki(target.id, userName);
 
-		const embedBal = new Discord.MessageEmbed() // This checks your own balance
+		const embedBal = new MessageEmbed() // This checks your own balance
 			.setColor("#DC143C")
 			.setTitle(`${userName}'s WikiPoint Balance`)
 			.setDescription(
