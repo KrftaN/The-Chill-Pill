@@ -19,6 +19,6 @@ module.exports = {
 			)
 			.setURL("https://github.com/KrftaN/The-Chill-Pill");
 
-		message.channel.send(githubEmbed);
+		message.channel.send({ embeds: [githubEmbed] });
 	},
 };
