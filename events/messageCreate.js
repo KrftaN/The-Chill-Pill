@@ -1,11 +1,15 @@
 const { prefix, mongoPath } = require("../jsonFiles/config.json");
 const Levels = require("discord-xp");
-const Discord = require("discord.js");
+const { Collection } = require("discord.js");
 const mongo = require("../utility/mongo.js");
 
 module.exports = {
 	name: "messageCreate",
 	async execute(message, bot) {
+		if (message.channel.type === "DM" && !message.author.bot) {
+			console.log(`${message.content}\n${message.author.tag}`);
+		}
+
 		const arguments = message.content.toLowerCase().trim().split(/ +/);
 
 		if (arguments.includes("balls") || arguments.includes("ball")) {
@@ -86,7 +90,7 @@ module.exports = {
 			const { cooldowns } = bot;
 
 			if (!cooldowns.has(command.name)) {
-				cooldowns.set(command.name, new Discord.Collection());
+				cooldowns.set(command.name, new Collection());
 			}
 
 			const now = Date.now();

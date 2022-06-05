@@ -40,7 +40,7 @@ module.exports = {
 		);
 
 		embed.setTimestamp();
-		embed.setFooter(bot.user.avatarURL({ dynamic: true }));
+		embed.setFooter("Bot made by KraftaN#8103", interaction.user.avatarURL({ dynamic: true }));
 
 		await interaction.reply({ embeds: [embed] });
 	},

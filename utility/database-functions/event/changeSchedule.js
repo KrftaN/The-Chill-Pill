@@ -158,7 +158,7 @@ module.exports.changeSchedule = async (messageId, userName, userId, reaction) =>
 			}
 
 			return [result.accepted, result.tentative, result.denied];
-		} catch {
+		} finally {
 			mongoose.connection.close();
 		}
 	});

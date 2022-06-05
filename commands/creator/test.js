@@ -1,5 +1,4 @@
-const {MessageEmbed} = require("discord.js");
-const wait = require("node:timers/promises").setTimeout;
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "test",
@@ -7,7 +6,5 @@ module.exports = {
 	description: "testing!",
 	creator: true,
 	args: false,
-	execute(message, args, bot) {
-		console.log(bot);
-	},
+	execute(message, args, bot) {},
 };

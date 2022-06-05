@@ -41,7 +41,7 @@ module.exports = {
 		);
 
 		embed.setTimestamp();
-		embed.setFooter("Hello.", message.author.avatarURL({ dynamic: true }));
+		embed.setFooter("Made by KraftaN.", message.author.avatarURL({ dynamic: true }));
 
 		message.channel.send({ embeds: [embed] });
 	},

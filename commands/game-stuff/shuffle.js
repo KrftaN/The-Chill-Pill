@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 
 module.exports = {
 	name: "shuffle",
-	aliases: ["shuffle"],
+	aliases: [],
 	description: "This is something which will probably never be used again!",
 	args: true,
 	minArgs: 1,

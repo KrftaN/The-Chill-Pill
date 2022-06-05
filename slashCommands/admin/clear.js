@@ -3,6 +3,7 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "clear",
+	permissions: "ADMINISTRATOR",
 	data: new SlashCommandBuilder()
 		.setName("clear")
 		.setDescription("This will clear messages")

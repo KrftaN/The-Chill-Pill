@@ -30,7 +30,7 @@ module.exports = {
 				methods[queue.repeatMode]
 			}**\n${track.requestedBy}`
 		);
-		embed.setFooter(bot.user.avatarURL({ dynamic: true }));
+		embed.setFooter("Bot made by KraftaN#8103", interaction.user.avatarURL({ dynamic: true }));
 		embed.setTimestamp();
 
 		const saveButton = new MessageButton();

@@ -6,7 +6,7 @@ module.exports = {
 	utilisation: "nowplaying",
 	voiceChannel: true,
 
-	execute(message, args, guild, bot) {
+	execute(message, args, bot) {
 		const queue = bot.player.getQueue(message.guild.id);
 
 		if (!queue || !queue.playing)
@@ -32,7 +32,7 @@ module.exports = {
 		);
 
 		embed.setTimestamp();
-		embed.setFooter("Shit bot", message.author.avatarURL({ dynamic: true }));
+		embed.setFooter("Made by KraftaN.", message.author.avatarURL({ dynamic: true }));
 
 		const saveButton = new MessageButton();
 

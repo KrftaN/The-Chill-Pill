@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const { Collection } = require("discord.js");
 
 module.exports = {
 	name: "interactionCreate",
@@ -47,7 +47,7 @@ module.exports = {
 		const { cooldowns } = bot;
 
 		if (!cooldowns.has(slashCommand.name)) {
-			cooldowns.set(slashCommand.name, new Discord.Collection());
+			cooldowns.set(slashCommand.name, new Collection());
 		}
 
 		const now = Date.now();
