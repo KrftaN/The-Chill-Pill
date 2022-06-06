@@ -18,7 +18,7 @@ module.exports = {
 				.setDescription("The user that will receive the message.")
 				.setRequired(true));
 		}),
-	async execute(interaction) {
+	async execute(interaction, bot) {
 		const { options } = interaction;
 
 		const message = options.getString("message");

@@ -13,7 +13,7 @@ module.exports = {
 				.setDescription("Write the message you want the bot to send")
 				.setRequired(true));
 		}),
-	async execute(interaction) {
+	async execute(interaction, bot) {
 		const { options } = interaction;
 
 		const message = options.getString("message");

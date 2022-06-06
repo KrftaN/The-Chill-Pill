@@ -15,7 +15,7 @@ module.exports = {
 			if (!authorPerms || !authorPerms.has(slashCommand.permissions)) {
 				if (interaction.user.id !== "344834268742156298") {
 					return interaction.reply({
-						content: "YOU DO NOT HAVE PERMISSION (git gud scrub)",
+						content: `You do not have the necessary permissions to execute this command! [Missing permission(s): ${slashCommand.permissions}]`,
 						ephemeral: true,
 					});
 				}

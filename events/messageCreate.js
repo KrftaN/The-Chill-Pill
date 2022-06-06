@@ -53,7 +53,9 @@ module.exports = {
 				const authorPerms = message.channel.permissionsFor(message.author);
 				if (!authorPerms || !authorPerms.has(command.permissions)) {
 					if (message.author.id !== "344834268742156298") {
-						return message.reply("YOU DO NOT HAVE PERMISSION (git gud scrub)");
+						return message.reply(
+							`You do not have the necessary permissions to execute this command! [Missing permissions: ${command.permissions}]`
+						);
 					}
 				}
 			}

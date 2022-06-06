@@ -8,14 +8,14 @@ const { uniqueId } = require("../../utility/functions/uniqueId");
 module.exports = {
 	name: "reactionroles",
 	creator: false,
-	permissions: "ADMINISTRATOR",
+	permissions: "MANAGE_ROLES",
 	data: new SlashCommandBuilder()
 		.setName("reactionroles")
 		.setDescription("Lets people add roles via reacting to a targeted message.")
 		.addStringOption((option) => {
 			return (option = option
-				.setName("messageid")
-				.setDescription("Select the amount of messages to delete from a channel or target.")
+				.setName("messagelink")
+				.setDescription("Input the message link to the message you want to collect reactions.")
 				.setRequired(true));
 		})
 		.addRoleOption((option) => {
@@ -30,11 +30,12 @@ module.exports = {
 				.setDescription("Choose the emoticon associated with the role.")
 				.setRequired(true));
 		}),
-	async execute(interaction) {
+	async execute(interaction, bot) {
 		const { options } = interaction;
 
 		const role = options.getRole("role");
-		const messageId = options.getString("messageid");
+		const messagelink = options.getString("messagelink");
+		const messageId = messagelink.split("/")[6];
 		const emoticon = options.getString("emoticon");
 		const reactionRoleId = uniqueId();
 
