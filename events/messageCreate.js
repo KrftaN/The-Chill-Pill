@@ -7,7 +7,7 @@ module.exports = {
 	name: "messageCreate",
 	async execute(message, bot) {
 		if (message.channel.type === "DM" && !message.author.bot) {
-			console.log(`${message.content}\n${message.author.tag}`);
+			console.log(`"${message.content}"\n-${message.author.tag}`);
 		}
 
 		const arguments = message.content.toLowerCase().trim().split(/ +/);

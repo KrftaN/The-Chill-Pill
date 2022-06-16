@@ -22,7 +22,7 @@ module.exports.deploy = async (bot) => {
 
 	rest
 		.put(Routes.applicationGuildCommands(bot.user.id, guildId), { body: commands })
-		.then(() => console.log("Successfully registered application commands."))
+		.then(() => console.log("-> Successfully registered application commands."))
 		.catch(console.error);
 };
 /* 

@@ -9,23 +9,22 @@ module.exports = {
 	once: true,
 	async execute(bot) {
 		await loadCommands(bot);
-		await cacheMessages(bot);
-
 		await mongo().then(() => {
 			try {
-				console.log("Connected to mongo!");
+				console.log("-> Connected to mongo!");
 			} finally {
 				mongoose.connection.close();
 			}
 		});
 
 		console.log(
-			`Connect as ${bot.user.tag}\n-> Ready on ${bot.guilds.cache.size} servers for a total of ${bot.users.cache.size} users`
+			`-> Connect as ${bot.user.tag}\n-> Ready on ${bot.guilds.cache.size} servers for a total of ${bot.users.cache.size} users`
 		);
 		bot.user.setActivity(`${prefix}help`, {
 			type: "WATCHING",
 		});
 
+		await cacheMessages(bot);
 		return bot;
 	},
 };

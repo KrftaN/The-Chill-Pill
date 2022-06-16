@@ -17,7 +17,7 @@ module.exports.registerPlayerEvents = (bot) => {
 	});
 
 	player.on("trackAdd", (queue, track) => {
-		queue.metadata.send(`**${track.title}** added to playlist. ✅`);
+		queue.metadata.send(`**${track.title}** was added to playlist. ✅`);
 	});
 
 	player.on("botDisconnect", (queue) => {

@@ -21,14 +21,15 @@ module.exports = {
 		}),
 	async execute(interaction, bot) {
 		const { options } = interaction;
+		await interaction.deferReply();
 		const option = options.getString("option");
 		const reactionRoleMessages = await reactionRoleInformation();
 		let array = new Array();
 
 		const embed = new MessageEmbed()
 			.setTitle(`Enabled Reaction Roles in this ${option}:`)
-			.setTimestamp(new Date())
 			.setColor("#800080")
+			.setTimestamp(new Date())
 			.setFooter(
 				"Use the help command for more useful commands.",
 				interaction.user.avatarURL({ dynamic: true })
@@ -46,10 +47,27 @@ module.exports = {
 			);
 		});
 
-		embed.setDescription(
-			array.length === 0 ? `There are no reaction roles in this ${option}` : array.join("\n")
-		);
+		if (array.join("").split("").length < 2300) {
+			embed.setDescription(
+				array.length === 0 ? `There are no reaction roles in this ${option}` : array.join("\n")
+			);
 
-		await interaction.reply({ embeds: [embed], ephemeral: true });
+			await interaction.followUp({ embeds: [embed], ephemeral: true });
+		} else {
+			const leftSide = array.splice(0, Math.ceil(array.length / 2));
+			const rightSide = array;
+			embed.setDescription(
+				array.length === 0 ? `There are no reaction roles in this ${option}` : leftSide.join("\n")
+			);
+			const embed2 = new MessageEmbed()
+				.setColor("#800080")
+				.setDescription(rightSide.join("\n"))
+				.setTimestamp(new Date())
+				.sEtFooter(
+					"Use the help command for more useful commands.",
+					interaction.user.avatarURL({ dynamic: true })
+				);
+			await interaction.followUp({ embeds: [embed, embed2], ephemeral: true });
+		}
 	},
 };

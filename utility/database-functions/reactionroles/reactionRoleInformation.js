@@ -15,7 +15,7 @@ module.exports.reactionRoleInformation = async () => {
 					guild: data.guildId,
 					uniqueId: data.reactionRoleId,
 					emoticon: data.emoticon,
-					role: data.roleId
+					role: data.roleId,
 				});
 			});
 

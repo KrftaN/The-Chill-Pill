@@ -51,6 +51,6 @@ module.exports.loadCommands = async (bot) => {
 			}
 		}
 	});
-
+	console.log("\n");
 	return bot;
 };

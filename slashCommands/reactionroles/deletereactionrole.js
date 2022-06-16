@@ -42,7 +42,7 @@ module.exports = {
 				.messages.fetch(messageId);
 
 			if (!message)
-				return interaction.reply({ content: "You have to include a valid message id." });
+				return interaction.reply({ content: "You have to include a valid message link." });
 
 			if (deleteBoolean === true) {
 				message.delete();

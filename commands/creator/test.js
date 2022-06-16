@@ -1,4 +1,7 @@
-const { MessageEmbed } = require("discord.js");
+//const data = reactionRoleInformation();
+module.exports.test = () => {
+	cache.push("test");
+};
 
 module.exports = {
 	name: "test",
@@ -7,9 +10,9 @@ module.exports = {
 	creator: true,
 	args: false,
 	execute(message, args, bot) {
-		const url = `https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`;
-		const messageId = url.split("/")[6];
+		const dataBase = [{ foo: "bar" }];
+		global.cache = global.cache || dataBase;
 
-		message.reply(messageId);
+		console.log(cache);
 	},
 };
