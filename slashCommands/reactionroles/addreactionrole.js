@@ -9,6 +9,7 @@ const { changeCache } = require("../../events/messageReactionAdd");
 module.exports = {
 	name: "addreactionrole",
 	creator: false,
+	admin: true,
 	permissions: "MANAGE_ROLES",
 	data: new SlashCommandBuilder()
 		.setName("addreactionrole")

@@ -10,6 +10,12 @@ module.exports = {
 
 		if (!slashCommand) return;
 
+		const botPerms = interaction.channel.permissionsFor(bot.user);
+		if (!botPerms.has("ADMINISTRATOR"))
+			return interaction.reply({
+				content: `❌ This bot needs \`ADMINISTRATOR permissions\` to function properly, please reinvite the bot with the \`ADMINISTRATOR box ticked.\``,
+			});
+
 		if (slashCommand.permissions) {
 			const authorPerms = interaction.channel.permissionsFor(interaction.user);
 			if (!authorPerms || !authorPerms.has(slashCommand.permissions)) {

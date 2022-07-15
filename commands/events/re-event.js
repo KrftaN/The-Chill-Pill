@@ -17,6 +17,7 @@ module.exports = {
 	minArgs: 1,
 	cooldown: 1,
 	guildOnly: true,
+	admin: true,
 	usage: `
 	<2000-01-01T12:00> 
 	<in 4 hours 20 minutes>

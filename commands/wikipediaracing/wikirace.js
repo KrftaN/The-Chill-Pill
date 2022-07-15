@@ -14,6 +14,7 @@ module.exports = {
 	minArgs: 1,
 	maxArgs: 1,
 	cooldown: 0,
+	admin: true,
 	usage: "<the amount of points it cost to enter the race>",
 	async execute(message, args, bot) {
 		try {

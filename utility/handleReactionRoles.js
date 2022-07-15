@@ -10,7 +10,7 @@ module.exports.handleReactionRoles = (roleId, guildId, user, bot) => {
 				.setTitle("Reaction Removed!")
 				.setColor("#800080")
 				.setDescription(
-					`<:minusbutcoolest:983670417522843698>Successfully removed \`${role.name}\``
+					`<:minusbutcoolest:983670417522843698> Successfully removed \`${role.name}\``
 				)
 				.setTimestamp(new Date())
 				.setFooter(
@@ -25,7 +25,7 @@ module.exports.handleReactionRoles = (roleId, guildId, user, bot) => {
 			const embed = new MessageEmbed()
 				.setTitle("Reaction Added!!")
 				.setColor("#800080")
-				.setDescription(`<:plus:983666900401807370>Successfully added \`${role.name}\``)
+				.setDescription(`<:plus:983666900401807370> Successfully added \`${role.name}\``)
 				.setTimestamp(new Date())
 				.setFooter(
 					"Use the help command for more useful commands.",

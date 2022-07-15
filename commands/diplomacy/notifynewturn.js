@@ -28,8 +28,6 @@ module.exports = {
 
 					lastDate = lastDate ?? currentDateCheck;
 
-					console.log(currentDateCheck === lastDate);
-
 					if (currentDateCheck === lastDate) return;
 					lastDate = currentDateCheck;
 
@@ -57,7 +55,7 @@ module.exports = {
 						});
 					});
 				});
-			}, 2000); //120000
+			}, 120000); //120000
 		} catch (err) {
 			console.log(err);
 		}

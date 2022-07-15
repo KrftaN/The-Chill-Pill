@@ -19,7 +19,7 @@ module.exports = {
 		const methods = ["🔁", "🔂"];
 
 		embed.setColor("RED");
-		
+
 		embed.setThumbnail(message.guild.iconURL({ size: 2048, dynamic: true }));
 		embed.setTitle(`Server Music List - ${message.guild.name} ${methods[queue.repeatMode]}`);
 
@@ -40,8 +40,9 @@ module.exports = {
 				.join("\n")}\n\n${nextSongs}`
 		);
 
+		const ablin = bot.users.cache.find((user) => user.id === "523819929988890629");
 		embed.setTimestamp();
-		embed.setFooter("Made by KraftaN.", message.author.avatarURL({ dynamic: true }));
+		embed.setFooter("Bot haxxed by ablin xd", ablin.avatarURL({ dynamic: true }));
 
 		message.channel.send({ embeds: [embed] });
 	},

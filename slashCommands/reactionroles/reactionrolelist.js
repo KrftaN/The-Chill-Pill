@@ -7,6 +7,7 @@ const {
 module.exports = {
 	name: "reactionrolelist",
 	creator: false,
+	admin: true,
 	permissions: "MANAGE_ROLES",
 	data: new SlashCommandBuilder()
 		.setName("reactionrolelist")

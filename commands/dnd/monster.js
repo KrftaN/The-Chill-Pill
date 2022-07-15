@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const { embedify } = require("../../utility/functions/embedify");
 const { prefix } = require("../../jsonFiles/config.json");
+const { ciEquals } = require("../../utility/functions/ciEquals");
 const monsters = require("../../jsonFiles/monsters.json");
 
 module.exports = {
@@ -12,12 +13,6 @@ module.exports = {
 	minArgs: 1,
 	cooldown: 1,
 	async execute(message, args) {
-		function ciEquals(a, b) {
-			return typeof a === "string" && typeof b === "string"
-				? a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0
-				: a === b;
-		}
-
 		let monsterInfo;
 
 		const monsterName = args.join(" ");
@@ -115,9 +110,7 @@ module.exports = {
 				{ name: "Languages", value: monsterInfo.languages.toString() },
 				{ name: "Challange", value: monsterInfo.challange.toString() },
 				{ name: "\u200B", value: "\u200B" }
-			)
-			.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
-			.setTimestamp(new Date());
+			);
 
 		const actions = new MessageEmbed()
 			.setTitle("Actions")
@@ -127,7 +120,7 @@ module.exports = {
 		const actions_Continuation = new MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.actions}`)
-			.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
+			.setFooter({ text: `Use the \`${prefix}monsterlist\` for more monsters` })
 			.setTimestamp(new Date());
 
 		const traits = new MessageEmbed()
@@ -138,7 +131,7 @@ module.exports = {
 		const traits_Continuation = new MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.traits}`)
-			.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
+			.setFooter({ text: `Use the \`${prefix}monsterlist\` for more monsters` })
 			.setTimestamp(new Date());
 
 		const legendary_actions = new MessageEmbed()
@@ -149,7 +142,7 @@ module.exports = {
 		const legendary_actions_Continuation = new MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.legendary_actions}`)
-			.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
+			.setFooter({ text: `Use the \`${prefix}monsterlist\` for more monsters` })
 			.setTimestamp(new Date());
 
 		const reactions = new MessageEmbed()
@@ -160,7 +153,7 @@ module.exports = {
 		const reactions_Continuation = new MessageEmbed()
 			.setColor("#DC143C")
 			.setDescription(`${monsterInfo?.reactions}`)
-			.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
+			.setFooter({ text: `Use the \`${prefix}monsterlist\` for more monsters` })
 			.setTimestamp(new Date());
 
 		const array = new Array();
@@ -177,9 +170,6 @@ module.exports = {
 				array.push(traits);
 				array.push(traits_Continuation);
 			} else {
-				traits
-					.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
-					.setTimestamp(new Date());
 				array.push(traits);
 			}
 		}
@@ -196,9 +186,6 @@ module.exports = {
 				array.push(actions);
 				array.push(actions_Continuation);
 			} else {
-				actions
-					.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
-					.setTimestamp(new Date());
 				array.push(actions);
 			}
 		}
@@ -215,9 +202,6 @@ module.exports = {
 				array.push(reactions);
 				array.push(reactions_Continuation);
 			} else {
-				reactions
-					.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
-					.setTimestamp(new Date());
 				array.push(reactions);
 			}
 		}
@@ -234,18 +218,41 @@ module.exports = {
 				array.push(legendary_actions);
 				array.push(legendary_actions_Continuation);
 			} else {
-				legendary_actions
-					.setFooter(`Write ${prefix}monsterlist or ${prefix}monsters`)
-					.setTimestamp(new Date());
 				array.push(legendary_actions);
 			}
 		}
 
-		const firstHalf = array.splice(0, Math.ceil(array.length / 2));
-		const secondHalf = array;
+		let firstHalf = array.splice(0, Math.ceil(array.length / 2));
+		let secondHalf = array;
 
-		message.channel
-			.send({ embeds: [overview, ...firstHalf] })
-			.then(message.channel.send({ embeds: [...secondHalf] }));
+		if (secondHalf.length > 0) {
+			const newEmbed = secondHalf
+				.pop()
+				.setFooter({
+					text: `Use the ${prefix}monsterlist for more monsters`,
+					iconURL: message.author.avatarURL({ dynamic: true }),
+				})
+				.setTimestamp(new Date());
+
+			secondHalf.push(newEmbed);
+		} else {
+			const newEmbed = firstHalf
+				.pop()
+				.setFooter({
+					text: `Use the ${prefix}monsterlist for more monsters`,
+					iconURL: message.author.avatarURL({ dynamic: true }),
+				})
+				.setTimestamp(new Date());
+
+			firstHalf.push(newEmbed);
+		}
+
+		if (secondHalf < 0) {
+			message.channel
+				.send({ embeds: [overview, ...firstHalf] })
+				.then(interaction.channel.send({ embeds: [...secondHalf] }));
+		} else {
+			message.channel.send({ embeds: [overview, ...firstHalf] });
+		}
 	},
 };

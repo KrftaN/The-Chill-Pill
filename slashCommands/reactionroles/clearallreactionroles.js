@@ -11,6 +11,7 @@ const { cacheMessages } = require("../../utility/onReady/cacheMessages");
 module.exports = {
 	name: "clearallreactionroles",
 	creator: false,
+	admin: true,
 	permissions: "MANAGE_ROLES",
 	data: new SlashCommandBuilder()
 		.setName("clearallreactionroles")

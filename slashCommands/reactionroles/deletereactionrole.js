@@ -10,6 +10,7 @@ const {
 module.exports = {
 	name: "deletereactionrole",
 	creator: false,
+	admin: true,
 	permissions: "MANAGE_ROLES",
 	data: new SlashCommandBuilder()
 		.setName("deletereactionrole")

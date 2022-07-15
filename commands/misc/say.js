@@ -7,6 +7,7 @@ module.exports = {
 	args: true,
 	minArgs: 1,
 	cooldown: 3,
+	admin: true,
 	usage: "<the message you want the bot to send>",
 	execute(message, args, bot) {
 		message.delete();

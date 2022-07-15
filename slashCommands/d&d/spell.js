@@ -61,7 +61,7 @@ module.exports = {
 					{ inline: true, name: "Class", value: spellInfo.class.toString() },
 					{ name: "\u200B", value: "\u200B" }
 				)
-				.setFooter(`Write ${prefix}spelllist  or ${prefix}spells`)
+				.setFooter({ text: `Use the ${prefix}spelllist for more spells` })
 				.setTimestamp(new Date());
 
 			if (spellInfo?.higher_level) {
@@ -88,7 +88,7 @@ module.exports = {
 
 			interaction.reply({ embeds: [embed] });
 		} else {
-			const embed = new Discord.MessageEmbed()
+			const embed = new MessageEmbed()
 				.setTitle(spellInfo.name.toString())
 				.setColor("#DC143C")
 				.setThumbnail("https://i.imgur.com/u0aN19t.png")
@@ -119,11 +119,11 @@ module.exports = {
 				);
 			}
 
-			const embed2 = new Discord.MessageEmbed()
+			const embed2 = new MessageEmbed()
 				.setTitle("Description")
 				.setColor("#DC143C")
 				.setDescription(spellInfo.desc.toString())
-				.setFooter(`Write ${prefix}spelllist  or ${prefix}spells`)
+				.setFooter({ text: `Use the ${prefix}spelllist for more spells` })
 				.setTimestamp(new Date());
 
 			interaction.reply({ embeds: [embed, embed2] });

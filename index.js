@@ -9,7 +9,6 @@ const { Player } = require("discord-player");
 const fs = require("fs");
 const { registerPlayerEvents } = require("./utility/onReady/musicEvents.js");
 bot.login(token);
-
 bot.cooldowns = new Discord.Collection();
 bot.config = require("./utility/config");
 bot.player = new Player(bot, bot.config.opt.discordPlayer);

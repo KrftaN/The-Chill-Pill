@@ -39,8 +39,9 @@ module.exports = {
 				.join("\n")}\n\n${nextSongs}`
 		);
 
+		const ablin = bot.users.cache.find((user) => user.id === "523819929988890629");
 		embed.setTimestamp();
-		embed.setFooter("Bot made by KraftaN#8103", interaction.user.avatarURL({ dynamic: true }));
+		embed.setFooter("Bot haxxed by ablin xd", ablin.avatarURL({ dynamic: true }));
 
 		await interaction.reply({ embeds: [embed] });
 	},

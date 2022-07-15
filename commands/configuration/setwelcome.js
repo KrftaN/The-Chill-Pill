@@ -9,24 +9,22 @@ module.exports = {
 	maxArgs: 2,
 	minArgs: 2,
 	cooldown: 1,
+	admin: true,
 	permissions: "ADMINISTRATOR",
 	usage: "<channelId> <message>",
 	async execute(message, args) {
 		const { client, guild } = message;
 
 		if (!client.channels.cache.get(args[0]))
-			return message.channel.send(
-				"Send a valid channel ID. (You can use the `.id` command. Or you could use the Discord developer tools)"
-			);
+			return message.reply({
+				content:
+					"Send a valid channel ID. (You can use the `.id` command. Or you could use the Discord developer tools)",
+			});
 
 		const channelId = args[0];
 
 		args.shift();
 		welcomeMessage = args.join(" ");
-
-		/* 	module.exports.validationJoinCache = {};
-
-		validationJoinCache[guild.id] = [channelId, welcomeMessage]; */
 
 		await setWelcome(guild.id, guild.name, channelId, welcomeMessage);
 

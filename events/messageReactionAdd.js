@@ -21,24 +21,20 @@ module.exports = {
 
 		data = data ?? (await reactionRoleInformation());
 
-		data.forEach((reactionRole) => {
-			if (
-				reactionRole.id === reaction.message.id &&
-				reactionRole.emoticon === reaction.emoji.name
-			) {
-				handleReactionRoles(reactionRole.role, reactionRole.guild, user, bot); //Adds/removes the role.
-				reaction.users.remove(user);
-			} else if (reactionRole.id === reaction.message.id && user.bot === false) {
-				//Removes the reaction if it was made on one of the reaction role messages and not one of the chosen reactions.
-				reaction.users.remove(user);
-			}
-		});
+		const reactionRole = data.find(({ id }) => id === reaction.message.id);
+
+		if (reactionRole.emoticon === reaction.emoji.name) {
+			handleReactionRoles(reactionRole.role, reactionRole.guild, user, bot); //Adds/removes the role.
+			reaction.users.remove(user);
+		} else if (reactionRole.id === reaction.message.id && user.bot === false) {
+			//Removes the reaction if it was made on one of the reaction role messages and not one of the chosen reactions.
+			reaction.users.remove(user);
+		}
 	},
 };
 module.exports.changeCache = async (element) => {
 	if (!data) {
 		data = await reactionRoleInformation();
 	}
-
 	return data.push(element);
 };

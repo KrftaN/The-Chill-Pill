@@ -1,6 +1,6 @@
 const { prefix, mongoPath } = require("../jsonFiles/config.json");
 const Levels = require("discord-xp");
-const { Collection } = require("discord.js");
+const { Collection, Permissions } = require("discord.js");
 const mongo = require("../utility/mongo.js");
 
 module.exports = {
@@ -46,17 +46,21 @@ module.exports = {
 
 			if (!command) return;
 
+			const botPerms = message.channel.permissionsFor(bot.user);
+			if (!botPerms.has("ADMINISTRATOR"))
+				return message.reply({
+					content: `❌ This bot needs \`ADMINISTRATOR permissions\` to function properly, please reinvite the bot with the \`ADMINISTRATOR box ticked.\``,
+				});
+
 			if (command.guildOnly && message.channel.type === "DM")
 				return message.reply("I can't execute that command inside DMs!");
 
 			if (command.permissions) {
 				const authorPerms = message.channel.permissionsFor(message.author);
 				if (!authorPerms || !authorPerms.has(command.permissions)) {
-					if (message.author.id !== "344834268742156298") {
-						return message.reply(
-							`You do not have the necessary permissions to execute this command! [Missing permissions: ${command.permissions}]`
-						);
-					}
+					return message.reply({
+						content: `❌ You do not have the necessary permissions to execute this command! [Missing permissions: ${command.permissions}]`,
+					});
 				}
 			}
 

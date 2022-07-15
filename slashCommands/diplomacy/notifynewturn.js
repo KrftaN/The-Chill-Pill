@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const cheerio = require("cheerio");
 const axios = require("axios");
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
 	name: "notifynewturn",
@@ -25,9 +25,7 @@ module.exports = {
 		}),
 	async execute(interaction) {
 		try {
-			const url =
-				interaction.options.getString("gameurl") ||
-				"https://webdiplomacy.net/board.php?gameID=412557";
+			const url = interaction.options.getString("gameurl");
 
 			let lastDate;
 			let currentDateCheck;
@@ -46,8 +44,6 @@ module.exports = {
 
 					lastDate = lastDate ?? currentDateCheck;
 
-					console.log(currentDateCheck === lastDate);
-
 					if (currentDateCheck === lastDate) return;
 					lastDate = currentDateCheck;
 
@@ -60,7 +56,7 @@ module.exports = {
 							"href"
 						)}`;
 
-						const embed = new Discord.MessageEmbed()
+						const embed = new MessageEmbed()
 							.setTitle(`${currentDate.toString()} | New Round Lads!`)
 							.setImage(currentMap.toString())
 							.setDescription("A new round has started, make sure to finish your moves!")

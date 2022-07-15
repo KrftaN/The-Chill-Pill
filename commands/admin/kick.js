@@ -6,6 +6,7 @@ module.exports = {
 	guildOnly: true,
 	cooldown: 0,
 	minArgs: 2,
+	admin: true,
 	permissions: "ADMINISTRATOR",
 	usage: "<user> <reason>",
 	execute(message, args) {

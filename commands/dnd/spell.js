@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const { embedify } = require("../../utility/functions/embedify");
 const { getCharacterCount } = require("../../utility/functions/getCharacterCount");
+const { ciEquals } = require("../../utility/functions/ciEquals");
 const { prefix } = require("../../jsonFiles/config.json");
 const spells = require("../../jsonFiles/spells.json");
 
@@ -14,12 +15,6 @@ module.exports = {
 	usage: "<spell name>",
 	cooldown: 1,
 	execute(message, args) {
-		function ciEquals(a, b) {
-			return typeof a === "string" && typeof b === "string"
-				? a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0
-				: a === b;
-		}
-
 		let spellInfo;
 
 		const spellName = args.join(" ");
@@ -66,7 +61,7 @@ module.exports = {
 					{ inline: true, name: "Class", value: spellInfo.class.toString() },
 					{ name: "\u200B", value: "\u200B" }
 				)
-				.setFooter(`Write ${prefix}spelllist or ${prefix}spells`)
+				.setFooter({ text: `Use the ${prefix}spelllist for more spells` })
 				.setTimestamp(new Date());
 
 			if (spellInfo?.higher_level) {
@@ -128,7 +123,7 @@ module.exports = {
 				.setTitle("Description")
 				.setColor("#DC143C")
 				.setDescription(spellInfo.desc.toString())
-				.setFooter(`Write ${prefix}spelllist or ${prefix}spells`)
+				.setFooter({ text: `Use the ${prefix}spelllist for more spells` })
 				.setTimestamp(new Date());
 
 			message.channel.send({ embeds: [embed, embed2] });

@@ -9,6 +9,7 @@ module.exports = {
 	maxArgs: 2,
 	minArgs: 2,
 	cooldown: 1,
+	admin: true,
 	permissions: "ADMINISTRATOR",
 	usage: "<channelId>",
 	async execute(message, args) {
